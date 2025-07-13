@@ -1,0 +1,271 @@
+.json-formatter-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.json-formatter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.json-formatter-header h2 {
+  color: #2c3e50;
+  margin: 0;
+}
+
+.formatter-controls {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.control-group label {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.control-group select {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+}
+
+.control-group input[type="checkbox"] {
+  margin-right: 0.25rem;
+}
+
+.formatter-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.formatter-actions button {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.formatter-actions button:hover {
+  transform: translateY(-1px);
+}
+
+.format-btn {
+  background-color: #1abc9c;
+  color: white;
+}
+
+.format-btn:hover {
+  background-color: #16a085;
+}
+
+.minify-btn {
+  background-color: #3498db;
+  color: white;
+}
+
+.minify-btn:hover {
+  background-color: #2980b9;
+}
+
+.validate-btn {
+  background-color: #f39c12;
+  color: white;
+}
+
+.validate-btn:hover {
+  background-color: #e67e22;
+}
+
+.sample-btn {
+  background-color: #9b59b6;
+  color: white;
+}
+
+.sample-btn:hover {
+  background-color: #8e44ad;
+}
+
+.clear-btn {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.clear-btn:hover {
+  background-color: #c0392b;
+}
+
+.error-message {
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.error-message.error {
+  background-color: #fdf2f2;
+  color: #e74c3c;
+  border: 1px solid #fecaca;
+}
+
+.error-message.success {
+  background-color: #f0f9f3;
+  color: #27ae60;
+  border: 1px solid #a7f3d0;
+}
+
+.formatter-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.input-section,
+.output-section {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.section-header h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.1rem;
+}
+
+.copy-btn {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background-color 0.3s;
+}
+
+.copy-btn:hover:not(:disabled) {
+  background-color: #5a6268;
+}
+
+.copy-btn:disabled {
+  background-color: #dee2e6;
+  cursor: not-allowed;
+}
+
+.json-textarea {
+  width: 100%;
+  border: none;
+  padding: 1.5rem;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  resize: none;
+  outline: none;
+  background-color: #fafafa;
+}
+
+.json-textarea:focus {
+  background-color: white;
+}
+
+.character-count {
+  padding: 0.5rem 1.5rem;
+  background-color: #f8f9fa;
+  border-top: 1px solid #e0e0e0;
+  color: #6c757d;
+  font-size: 0.8rem;
+  text-align: right;
+}
+
+.json-tools {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+}
+
+.tool-section h3 {
+  margin: 0 0 1rem 0;
+  color: #2c3e50;
+}
+
+.json-stats {
+  color: #6c757d;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.75rem;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}
+
+.stat-item span:first-child {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+.stat-item span:last-child {
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .formatter-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .json-formatter-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .formatter-controls {
+    justify-content: center;
+  }
+  
+  .formatter-actions {
+    justify-content: center;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
