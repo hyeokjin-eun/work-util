@@ -10,28 +10,36 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--medium-gray);
 }
 
 .wbs-header h2 {
-  color: #2c3e50;
+  color: var(--text-primary);
   margin: 0;
+  font-weight: 700;
+  font-size: 1.8rem;
+  letter-spacing: -0.5px;
 }
 
 .new-project-btn {
-  background-color: #1abc9c;
-  color: white;
+  background-color: var(--primary-black);
+  color: var(--primary-white);
   border: none;
   padding: 0.75rem 1.5rem;
-  border-radius: 4px;
+  border-radius: 2px;
   cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.3s, transform 0.2s;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
 }
 
 .new-project-btn:hover {
-  background-color: #16a085;
-  transform: translateY(-1px);
+  background-color: var(--primary-white);
+  color: var(--primary-black);
+  border: 1px solid var(--medium-gray);
 }
 
 .wbs-content {
@@ -544,7 +552,29 @@
   }
 }
 
+@media (max-width: 1200px) {
+  .kanban-board {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
 @media (max-width: 768px) {
+  .wbs-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+    text-align: center;
+  }
+  
+  .wbs-header h2 {
+    font-size: 1.5rem;
+  }
+  
+  .new-project-btn {
+    width: 100%;
+    padding: 1rem;
+  }
+  
   .wbs-content {
     flex-direction: column;
     gap: 1rem;
@@ -553,33 +583,147 @@
   .projects-sidebar {
     width: auto;
     max-height: 300px;
+    order: 2;
   }
   
-  .kanban-board {
-    grid-template-columns: 1fr;
+  .wbs-main {
+    order: 1;
   }
   
   .project-header {
     flex-direction: column;
     align-items: stretch;
+    gap: 1rem;
+  }
+  
+  .project-actions {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .project-actions select,
+  .project-actions button {
+    flex: 1;
+    min-width: 120px;
   }
   
   .project-stats {
     justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .stat-card {
+    min-width: 80px;
+    padding: 0.75rem;
+  }
+  
+  .stat-value {
+    font-size: 1.2rem;
   }
   
   .filters {
     flex-direction: column;
     gap: 1rem;
     align-items: stretch;
+    padding: 1rem;
+  }
+  
+  .filter-group {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+  
+  .filter-group select {
+    width: 100%;
   }
   
   .template-actions {
     justify-content: center;
     flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .template-actions button {
+    flex: 1;
+    min-width: 100px;
+    padding: 0.75rem;
+  }
+  
+  .kanban-board {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .kanban-column {
+    max-height: 600px;
+  }
+  
+  .kanban-task {
+    margin-bottom: 0.5rem;
+  }
+  
+  .task-header {
+    margin-bottom: 0.75rem;
+  }
+  
+  .kanban-task h5 {
+    font-size: 0.9rem;
+  }
+  
+  .task-info {
+    gap: 0.5rem;
+  }
+  
+  .task-info span {
+    font-size: 0.7rem;
+  }
+  
+  .task-actions {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .task-actions button {
+    padding: 0.5rem;
+    font-size: 0.75rem;
   }
   
   .form-row {
     grid-template-columns: 1fr;
+  }
+  
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    padding: 1rem;
+    font-size: 1rem;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .form-actions button {
+    width: 100%;
+    padding: 1rem;
+  }
+  
+  .project-item {
+    padding: 1rem;
+  }
+  
+  .project-item h4 {
+    font-size: 0.9rem;
+  }
+  
+  .project-item p {
+    font-size: 0.8rem;
+  }
+  
+  .project-dates {
+    font-size: 0.75rem;
   }
 }

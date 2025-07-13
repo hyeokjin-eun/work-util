@@ -11,7 +11,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f5f5f5;
+  background-color: #fafafa;
+  color: #333333;
 }
 
 code {
@@ -23,4 +24,20 @@ code {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+/* 전역 색상 변수 정의 */
+:root {
+  --primary-black: #2c2c2c;
+  --primary-white: #ffffff;
+  --secondary-black: #404040;
+  --light-gray: #f8f8f8;
+  --medium-gray: #e5e5e5;
+  --dark-gray: #666666;
+  --border-gray: #ddd;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-light: #999999;
+  --accent-black: #4a4a4a;
+  --soft-black: #1a1a1a;
 }

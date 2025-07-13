@@ -13,8 +13,11 @@
 }
 
 .json-formatter-header h2 {
-  color: #2c3e50;
+  color: var(--text-primary);
   margin: 0;
+  font-weight: 700;
+  font-size: 1.8rem;
+  letter-spacing: -0.5px;
 }
 
 .formatter-controls {
@@ -31,16 +34,19 @@
 }
 
 .control-group label {
-  color: #7f8c8d;
+  color: var(--text-secondary);
   font-size: 0.9rem;
   white-space: nowrap;
+  font-weight: 500;
 }
 
 .control-group select {
   padding: 0.5rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  background: white;
+  border: 1px solid var(--border-gray);
+  border-radius: 2px;
+  background: var(--primary-white);
+  color: var(--text-primary);
+  font-size: 0.9rem;
 }
 
 .control-group input[type="checkbox"] {
@@ -56,11 +62,12 @@
 
 .formatter-actions button {
   padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 4px;
+  border: 1px solid transparent;
+  border-radius: 2px;
   cursor: pointer;
   font-size: 0.9rem;
-  transition: background-color 0.3s, transform 0.2s;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
 .formatter-actions button:hover {
@@ -68,48 +75,58 @@
 }
 
 .format-btn {
-  background-color: #1abc9c;
-  color: white;
+  background-color: var(--primary-black);
+  color: var(--primary-white);
 }
 
 .format-btn:hover {
-  background-color: #16a085;
+  background-color: var(--primary-white);
+  color: var(--primary-black);
+  border: 1px solid var(--medium-gray);
 }
 
 .minify-btn {
-  background-color: #3498db;
-  color: white;
+  background-color: var(--secondary-black);
+  color: var(--primary-white);
 }
 
 .minify-btn:hover {
-  background-color: #2980b9;
+  background-color: var(--primary-white);
+  color: var(--secondary-black);
+  border: 1px solid var(--medium-gray);
 }
 
 .validate-btn {
-  background-color: #f39c12;
-  color: white;
+  background-color: var(--dark-gray);
+  color: var(--primary-white);
 }
 
 .validate-btn:hover {
-  background-color: #e67e22;
+  background-color: var(--primary-white);
+  color: var(--dark-gray);
+  border: 1px solid var(--dark-gray);
 }
 
 .sample-btn {
-  background-color: #9b59b6;
-  color: white;
+  background-color: var(--accent-black);
+  color: var(--primary-white);
 }
 
 .sample-btn:hover {
-  background-color: #8e44ad;
+  background-color: var(--primary-white);
+  color: var(--accent-black);
+  border: 1px solid var(--medium-gray);
 }
 
 .clear-btn {
-  background-color: #e74c3c;
-  color: white;
+  background-color: var(--text-light);
+  color: var(--primary-white);
 }
 
 .clear-btn:hover {
-  background-color: #c0392b;
+  background-color: var(--primary-white);
+  color: var(--text-light);
+  border: 1px solid var(--text-light);
 }
 
 .error-message {
@@ -248,24 +265,72 @@
 }
 
 @media (max-width: 768px) {
-  .formatter-content {
-    grid-template-columns: 1fr;
-  }
-  
   .json-formatter-header {
     flex-direction: column;
     align-items: stretch;
+    gap: 1rem;
+  }
+  
+  .json-formatter-header h2 {
+    text-align: center;
+    font-size: 1.5rem;
   }
   
   .formatter-controls {
+    justify-content: center;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .control-group {
     justify-content: center;
   }
   
   .formatter-actions {
     justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .formatter-actions button {
+    flex: 1;
+    min-width: 120px;
+    padding: 1rem;
+  }
+  
+  .formatter-content {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .section-header h3 {
+    font-size: 1rem;
+  }
+  
+  .json-textarea {
+    font-size: 0.8rem;
+    padding: 1rem;
+  }
+  
+  .copy-btn {
+    padding: 0.75rem 1rem;
+    font-size: 0.8rem;
   }
   
   .stats-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+  
+  .stat-item {
+    padding: 0.75rem 0.5rem;
+  }
+  
+  .stat-item span:first-child {
+    font-size: 0.8rem;
+  }
+  
+  .stat-item span:last-child {
+    font-size: 0.85rem;
   }
 }
