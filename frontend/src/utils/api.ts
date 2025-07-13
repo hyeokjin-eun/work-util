@@ -2,6 +2,7 @@ import axios from 'axios';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || '/api';
 
+// 버전 1.0.1 - 캐시 무효화
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {

@@ -1,6 +1,6 @@
 {
   "name": "work-util",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "업무에 필요한 유틸리티 도구 모음",
   "private": true,
   "dependencies": {

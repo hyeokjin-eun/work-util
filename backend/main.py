@@ -24,14 +24,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(auth_router, prefix="/api/auth", tags=["인증"])
-app.include_router(protected_router, prefix="/api/protected", tags=["보호된 라우트"])
+app.include_router(auth_router, prefix="/auth", tags=["인증"])
+app.include_router(protected_router, prefix="/protected", tags=["보호된 라우트"])
 
 @app.get("/")
 async def root():
     return {"message": "Work-Util Backend API", "status": "running"}
 
-@app.get("/api/health")
+@app.get("/health")
 async def health_check():
     return {"status": "healthy"}
 
