@@ -12,6 +12,7 @@ import JsonFormatter from './pages/JsonFormatter';
 import JsonCompare from './pages/JsonCompare';
 import QrGenerator from './pages/QrGenerator';
 import WbsManager from './pages/WbsManager';
+import MyPage from './pages/MyPage';
 import IntroModal from './components/IntroModal';
 import { useIntro } from './hooks/useIntro';
 
@@ -81,6 +82,11 @@ function AppContent() {
           <Route path="/wbs" element={
             <ProtectedRoute>
               <WbsManager />
+            </ProtectedRoute>
+          } />
+          <Route path="/mypage" element={
+            <ProtectedRoute>
+              <MyPage />
             </ProtectedRoute>
           } />
         </Routes>
@@ -163,12 +169,12 @@ function BottomNavigation() {
         <path d="M14 4l-4 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
     )},
-    { path: '/qr-generator', label: 'QR', icon: (
+    { path: '/mypage', label: '마이', icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-        <rect x="3" y="3" width="7" height="7" stroke="currentColor" strokeWidth="2"/>
-        <rect x="14" y="3" width="7" height="7" stroke="currentColor" strokeWidth="2"/>
-        <rect x="3" y="14" width="7" height="7" stroke="currentColor" strokeWidth="2"/>
-        <rect x="15" y="15" width="5" height="5" stroke="currentColor" strokeWidth="2"/>
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" 
+          stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        <circle cx="12" cy="7" r="4" 
+          stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
       </svg>
     )}
   ];
