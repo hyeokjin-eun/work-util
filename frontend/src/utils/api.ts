@@ -2,12 +2,15 @@ import axios from 'axios';
 
 const API_BASE_URL = process.env.REACT_APP_API_URL || '/api';
 
-// 버전 1.0.1 - 캐시 무효화
+// 버전 1.0.2 - 캐시 무효화 및 성능 향상
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
+    'Cache-Control': 'no-cache',
+    'Pragma': 'no-cache',
   },
+  timeout: 10000,
 });
 
 api.interceptors.request.use(

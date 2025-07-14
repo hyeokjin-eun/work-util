@@ -1,0 +1,20 @@
+<svg width="120" height="40" viewBox="0 0 120 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0891b2;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Icon -->
+  <rect x="2" y="8" width="24" height="24" rx="6" fill="url(#logoGradient)"/>
+  <path d="M8 20l4 4 8-8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Text -->
+  <text x="32" y="17" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="700" fill="#2c2c2c">
+    Work
+  </text>
+  <text x="32" y="30" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="500" fill="#666666">
+    Util
+  </text>
+</svg>

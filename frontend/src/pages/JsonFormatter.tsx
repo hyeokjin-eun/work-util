@@ -116,15 +116,22 @@ const JsonFormatter: React.FC = () => {
   }, [formatJson]);
 
   return (
-    <div className="json-formatter-container">
-      <div className="json-formatter-header">
-        <h2>JSON 포맷터</h2>
-        <div className="formatter-controls">
+    <div className="page-container">
+      <div className="page-header">
+        <div className="header-icon">{'{}'}</div>
+        <h1 className="page-title">JSON 포맷터</h1>
+        <p className="page-subtitle">복잡한 JSON 데이터를 보기 좋게 정리하고 분석하세요</p>
+      </div>
+
+      <div className="section">
+        <h3 className="section-title">설정 및 도구</h3>
+        <div className="controls-grid">
           <div className="control-group">
-            <label>들여쓰기 크기:</label>
+            <label className="control-label">들여쓰기 크기</label>
             <select 
               value={indentSize} 
               onChange={(e) => setIndentSize(Number(e.target.value))}
+              className="form-select"
             >
               <option value={2}>2 spaces</option>
               <option value={4}>4 spaces</option>
@@ -132,41 +139,59 @@ const JsonFormatter: React.FC = () => {
             </select>
           </div>
           <div className="control-group">
-            <label>
+            <label className="checkbox-label">
               <input
                 type="checkbox"
                 checked={sortKeys}
                 onChange={(e) => setSortKeys(e.target.checked)}
+                className="checkbox-input"
               />
-              키 정렬
+              <span className="checkbox-text">키 정렬</span>
             </label>
           </div>
         </div>
-      </div>
-
-      <div className="formatter-actions">
-        <button className="format-btn" onClick={formatJson}>포맷팅</button>
-        <button className="minify-btn" onClick={minifyJson}>압축</button>
-        <button className="validate-btn" onClick={validateJson}>검증</button>
-        <button className="sample-btn" onClick={loadSampleJson}>샘플 로드</button>
-        <button className="clear-btn" onClick={clearAll}>전체 지우기</button>
+        
+        <div className="actions-grid">
+          <button className="btn-primary" onClick={formatJson}>
+            <span className="btn-icon">🎨</span>
+            포맷팅
+          </button>
+          <button className="btn-secondary" onClick={minifyJson}>
+            <span className="btn-icon">📦</span>
+            압축
+          </button>
+          <button className="btn-secondary" onClick={validateJson}>
+            <span className="btn-icon">✅</span>
+            검증
+          </button>
+          <button className="btn-secondary" onClick={loadSampleJson}>
+            <span className="btn-icon">📝</span>
+            샘플 로드
+          </button>
+          <button className="btn-secondary" onClick={clearAll}>
+            <span className="btn-icon">🗑️</span>
+            전체 지우기
+          </button>
+        </div>
       </div>
 
       {error && (
-        <div className={`error-message ${error === 'Valid JSON' ? 'success' : 'error'}`}>
+        <div className={`notification ${error === 'Valid JSON' ? 'notification-success' : 'notification-error'}`}>
+          <span className="notification-icon">{error === 'Valid JSON' ? '✅' : '❌'}</span>
           {error}
         </div>
       )}
 
-      <div className="formatter-content">
-        <div className="input-section">
+      <div className="content-grid">
+        <div className="section">
           <div className="section-header">
-            <h3>입력 JSON</h3>
+            <h3 className="section-title">입력 JSON</h3>
             <button 
-              className="copy-btn" 
+              className="btn-secondary copy-btn" 
               onClick={() => copyToClipboard(input)}
               disabled={!input}
             >
+              <span className="btn-icon">📋</span>
               복사
             </button>
           </div>
@@ -177,39 +202,43 @@ const JsonFormatter: React.FC = () => {
             placeholder="여기에 JSON 데이터를 입력하세요..."
             rows={20}
           />
-          <div className="character-count">
-            문자 수: {input.length}
+          <div className="textarea-footer">
+            <span className="character-count">문자 수: {input.length}</span>
           </div>
         </div>
 
-        <div className="output-section">
+        <div className="section">
           <div className="section-header">
-            <h3>출력 JSON</h3>
+            <h3 className="section-title">출력 JSON</h3>
             <button 
-              className="copy-btn" 
+              className="btn-secondary copy-btn" 
               onClick={() => copyToClipboard(output)}
               disabled={!output}
             >
+              <span className="btn-icon">📋</span>
               복사
             </button>
           </div>
           <textarea
-            className="json-textarea"
+            className="json-textarea output"
             value={output}
             readOnly
             placeholder="포맷된 JSON이 여기에 표시됩니다..."
             rows={20}
           />
-          <div className="character-count">
-            문자 수: {output.length}
+          <div className="textarea-footer">
+            <span className="character-count">문자 수: {output.length}</span>
           </div>
         </div>
       </div>
 
-      <div className="json-tools">
-        <div className="tool-section">
-          <h3>JSON 정보</h3>
-          <div className="json-stats">
+      {output && (
+        <div className="section">
+          <h3 className="section-title">
+            <span className="section-icon">📊</span>
+            JSON 통계
+          </h3>
+          <div className="stats-container">
             {output && (() => {
               try {
                 const parsed = JSON.parse(output);
@@ -269,47 +298,71 @@ const JsonFormatter: React.FC = () => {
                 const stats = getJsonStats(parsed);
                 return (
                   <div className="stats-grid">
-                    <div className="stat-item">
-                      <span>최대 깊이:</span>
-                      <span>{stats.maxDepth}</span>
+                    <div className="stat-card">
+                      <div className="stat-icon">📏</div>
+                      <div className="stat-content">
+                        <span className="stat-label">최대 깊이</span>
+                        <span className="stat-value">{stats.maxDepth}</span>
+                      </div>
                     </div>
-                    <div className="stat-item">
-                      <span>객체 개수:</span>
-                      <span>{stats.objectCount}</span>
+                    <div className="stat-card">
+                      <div className="stat-icon">🧩</div>
+                      <div className="stat-content">
+                        <span className="stat-label">객체 개수</span>
+                        <span className="stat-value">{stats.objectCount}</span>
+                      </div>
                     </div>
-                    <div className="stat-item">
-                      <span>배열 개수:</span>
-                      <span>{stats.arrayCount}</span>
+                    <div className="stat-card">
+                      <div className="stat-icon">📚</div>
+                      <div className="stat-content">
+                        <span className="stat-label">배열 개수</span>
+                        <span className="stat-value">{stats.arrayCount}</span>
+                      </div>
                     </div>
-                    <div className="stat-item">
-                      <span>총 키 개수:</span>
-                      <span>{stats.totalKeys}</span>
+                    <div className="stat-card">
+                      <div className="stat-icon">🔑</div>
+                      <div className="stat-content">
+                        <span className="stat-label">총 키 개수</span>
+                        <span className="stat-value">{stats.totalKeys}</span>
+                      </div>
                     </div>
-                    <div className="stat-item">
-                      <span>문자열:</span>
-                      <span>{stats.stringCount}</span>
+                    <div className="stat-card">
+                      <div className="stat-icon">📝</div>
+                      <div className="stat-content">
+                        <span className="stat-label">문자열</span>
+                        <span className="stat-value">{stats.stringCount}</span>
+                      </div>
                     </div>
-                    <div className="stat-item">
-                      <span>숫자:</span>
-                      <span>{stats.numberCount}</span>
+                    <div className="stat-card">
+                      <div className="stat-icon">🔢</div>
+                      <div className="stat-content">
+                        <span className="stat-label">숫자</span>
+                        <span className="stat-value">{stats.numberCount}</span>
+                      </div>
                     </div>
-                    <div className="stat-item">
-                      <span>불린:</span>
-                      <span>{stats.booleanCount}</span>
+                    <div className="stat-card">
+                      <div className="stat-icon">✅</div>
+                      <div className="stat-content">
+                        <span className="stat-label">불린</span>
+                        <span className="stat-value">{stats.booleanCount}</span>
+                      </div>
                     </div>
-                    <div className="stat-item">
-                      <span>null:</span>
-                      <span>{stats.nullCount}</span>
+                    <div className="stat-card">
+                      <div className="stat-icon">⚫</div>
+                      <div className="stat-content">
+                        <span className="stat-label">null</span>
+                        <span className="stat-value">{stats.nullCount}</span>
+                      </div>
                     </div>
                   </div>
                 );
               } catch {
-                return <div>JSON 통계를 계산할 수 없습니다.</div>;
+                return <div className="error-text">JSON 통계를 계산할 수 없습니다.</div>;
               }
             })()}
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

@@ -4,8 +4,9 @@
   padding: 0;
 }
 
-body {
+html, body {
   margin: 0;
+  padding: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
@@ -13,6 +14,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: #fafafa;
   color: #333333;
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
 code {
@@ -22,12 +26,14 @@ code {
 
 #root {
   min-height: 100vh;
+  width: 100%;
   display: flex;
   flex-direction: column;
 }
 
 /* 전역 색상 변수 정의 */
 :root {
+  /* Base Colors */
   --primary-black: #2c2c2c;
   --primary-white: #ffffff;
   --secondary-black: #404040;
@@ -40,4 +46,49 @@ code {
   --text-light: #999999;
   --accent-black: #4a4a4a;
   --soft-black: #1a1a1a;
+  
+  /* Primary Brand Colors */
+  --primary-blue: #3b82f6;
+  --primary-teal: #0891b2;
+  --primary-indigo: #6366f1;
+  --primary-purple: #8b5cf6;
+  
+  /* Feature Colors */
+  --todo-color: #10b981; /* Green for tasks */
+  --meeting-color: #f59e0b; /* Amber for meetings */
+  --json-color: #8b5cf6; /* Purple for JSON */
+  --compare-color: #ef4444; /* Red for comparison */
+  --qr-color: #06b6d4; /* Cyan for QR */
+  --wbs-color: #3b82f6; /* Blue for WBS */
+  
+  /* Status Colors */
+  --success-color: #10b981;
+  --warning-color: #f59e0b;
+  --error-color: #ef4444;
+  --info-color: #3b82f6;
+  
+  /* Light Variations */
+  --primary-blue-light: #dbeafe;
+  --primary-teal-light: #cffafe;
+  --success-light: #d1fae5;
+  --warning-light: #fef3c7;
+  --error-light: #fee2e2;
+  
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-teal) 100%);
+  --gradient-success: linear-gradient(135deg, var(--success-color) 0%, #34d399 100%);
+  --gradient-warning: linear-gradient(135deg, var(--warning-color) 0%, #fbbf24 100%);
+  --gradient-purple: linear-gradient(135deg, var(--primary-purple) 0%, var(--primary-indigo) 100%);
+  
+  /* 전역 스타일 변수 */
+  --border-radius-sm: 8px;
+  --border-radius-md: 12px;
+  --border-radius-lg: 16px;
+  --border-radius-xl: 20px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --shadow-color: 0 4px 12px rgba(59, 130, 246, 0.15);
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
 }

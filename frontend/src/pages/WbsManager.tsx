@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { format, differenceInDays, addDays } from 'date-fns';
+import { format, addDays } from 'date-fns';
 import '../styles/WbsManager.css';
 
 interface WbsTask {
@@ -55,10 +55,12 @@ const WbsManager: React.FC = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [showNewProjectForm, setShowNewProjectForm] = useState(false);
   const [showNewTaskForm, setShowNewTaskForm] = useState(false);
-  const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
   const [viewMode, setViewMode] = useState<'kanban' | 'gantt' | 'tree'>('kanban');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [filterPriority, setFilterPriority] = useState<string>('all');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
+
+  console.log('WbsManager component rendered');
   const [newProject, setNewProject] = useState({
     name: '',
     description: '',
@@ -87,12 +89,20 @@ const WbsManager: React.FC = () => {
 
   useEffect(() => {
     const savedProjects = localStorage.getItem('wbs-projects');
+    console.log('Loading projects from localStorage:', savedProjects);
     if (savedProjects) {
-      setProjects(JSON.parse(savedProjects));
+      try {
+        const parsedProjects = JSON.parse(savedProjects);
+        console.log('Parsed projects:', parsedProjects);
+        setProjects(parsedProjects);
+      } catch (e) {
+        console.error('Error parsing projects:', e);
+      }
     }
   }, []);
 
   useEffect(() => {
+    console.log('Saving projects to localStorage:', projects);
     localStorage.setItem('wbs-projects', JSON.stringify(projects));
   }, [projects]);
 
@@ -109,6 +119,7 @@ const WbsManager: React.FC = () => {
       createdAt: new Date().toISOString()
     };
 
+    console.log('Creating new project:', project);
     setProjects([...projects, project]);
     setSelectedProject(project);
     setNewProject({
@@ -123,6 +134,7 @@ const WbsManager: React.FC = () => {
   const createTask = () => {
     if (!selectedProject || !newTask.title?.trim()) return;
 
+    console.log('Creating task for project:', selectedProject.name);
     const task: WbsTask = {
       id: uuidv4(),
       title: newTask.title,
@@ -342,7 +354,33 @@ const WbsManager: React.FC = () => {
     setSelectedProject(updatedProject);
   };
 
+  const deleteProject = (projectId: string) => {
+    console.log('Deleting project:', projectId);
+    const updatedProjects = projects.filter(p => p.id !== projectId);
+    setProjects(updatedProjects);
+    
+    if (selectedProject?.id === projectId) {
+      setSelectedProject(null);
+    }
+    setShowDeleteConfirm(null);
+  };
+
+  const deleteTask = (taskId: string) => {
+    if (!selectedProject) return;
+
+    console.log('Deleting task:', taskId);
+    const updatedTasks = selectedProject.tasks.filter(task => task.id !== taskId);
+    const updatedProject = { ...selectedProject, tasks: updatedTasks };
+    
+    setProjects(projects.map(p => p.id === selectedProject.id ? updatedProject : p));
+    setSelectedProject(updatedProject);
+  };
+
   const stats = getProjectStats();
+
+  console.log('Render - Projects:', projects);
+  console.log('Render - Selected Project:', selectedProject);
+  console.log('Render - Tasks:', selectedProject?.tasks);
 
   return (
     <div className="wbs-container">
@@ -351,6 +389,17 @@ const WbsManager: React.FC = () => {
         <div className="header-actions">
           <button className="new-project-btn" onClick={() => setShowNewProjectForm(true)}>
             + 새 프로젝트
+          </button>
+          <button 
+            style={{ marginLeft: '10px', backgroundColor: '#e74c3c' }}
+            onClick={() => {
+              console.log('Clearing localStorage...');
+              localStorage.removeItem('wbs-projects');
+              setProjects([]);
+              setSelectedProject(null);
+            }}
+          >
+            초기화 (디버그)
           </button>
         </div>
       </div>
@@ -366,13 +415,24 @@ const WbsManager: React.FC = () => {
                 <div
                   key={project.id}
                   className={`project-item ${selectedProject?.id === project.id ? 'active' : ''}`}
-                  onClick={() => setSelectedProject(project)}
                 >
-                  <h4>{project.name}</h4>
-                  <p>{project.description}</p>
-                  <div className="project-dates">
-                    {project.startDate} ~ {project.endDate}
+                  <div onClick={() => setSelectedProject(project)}>
+                    <h4>{project.name}</h4>
+                    <p>{project.description}</p>
+                    <div className="project-dates">
+                      {project.startDate} ~ {project.endDate}
+                    </div>
                   </div>
+                  <button 
+                    className="delete-project-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowDeleteConfirm(project.id);
+                    }}
+                    title="프로젝트 삭제"
+                  >
+                    🗑️
+                  </button>
                 </div>
               ))
             )}
@@ -625,6 +685,12 @@ const WbsManager: React.FC = () => {
                             <button onClick={() => updateTaskStatus(task.id, 'in_progress')}>
                               시작
                             </button>
+                            <button 
+                              onClick={() => deleteTask(task.id)}
+                              style={{ backgroundColor: '#e74c3c' }}
+                            >
+                              삭제
+                            </button>
                           </div>
                         </div>
                       ))}
@@ -668,6 +734,12 @@ const WbsManager: React.FC = () => {
                             </button>
                             <button onClick={() => updateTaskStatus(task.id, 'blocked')}>
                               블록
+                            </button>
+                            <button 
+                              onClick={() => deleteTask(task.id)}
+                              style={{ backgroundColor: '#e74c3c' }}
+                            >
+                              삭제
                             </button>
                           </div>
                         </div>
@@ -742,6 +814,12 @@ const WbsManager: React.FC = () => {
                             <button onClick={() => updateTaskStatus(task.id, 'in_progress')}>
                               재개
                             </button>
+                            <button 
+                              onClick={() => deleteTask(task.id)}
+                              style={{ backgroundColor: '#e74c3c' }}
+                            >
+                              삭제
+                            </button>
                           </div>
                         </div>
                       ))}
@@ -757,6 +835,31 @@ const WbsManager: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* 삭제 확인 다이얼로그 */}
+      {showDeleteConfirm && (
+        <div className="delete-confirm-modal">
+          <div className="delete-confirm-content">
+            <h3>프로젝트 삭제</h3>
+            <p>정말로 이 프로젝트를 삭제하시겠습니까?</p>
+            <p><strong>이 작업은 되돌릴 수 없습니다.</strong></p>
+            <div className="delete-confirm-actions">
+              <button 
+                className="confirm-delete-btn"
+                onClick={() => deleteProject(showDeleteConfirm)}
+              >
+                삭제
+              </button>
+              <button 
+                className="cancel-delete-btn"
+                onClick={() => setShowDeleteConfirm(null)}
+              >
+                취소
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

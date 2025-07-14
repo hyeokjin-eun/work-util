@@ -18,21 +18,25 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-app.include_router(auth_router, prefix="/auth", tags=["인증"])
-app.include_router(protected_router, prefix="/protected", tags=["보호된 라우트"])
+app.include_router(auth_router, prefix="/api/auth", tags=["인증"])
+app.include_router(protected_router, prefix="/api/protected", tags=["보호된 라우트"])
 
 @app.get("/")
 async def root():
     return {"message": "Work-Util Backend API", "status": "running"}
 
-@app.get("/health")
+@app.get("/api/health")
 async def health_check():
+    return {"status": "healthy"}
+
+@app.get("/health")
+async def health_check_simple():
     return {"status": "healthy"}
 
 if __name__ == "__main__":

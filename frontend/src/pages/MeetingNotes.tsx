@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { format } from 'date-fns';
 import '../styles/MeetingNotes.css';
+import '../styles/globals.css';
 
 interface MeetingNote {
   id: string;
