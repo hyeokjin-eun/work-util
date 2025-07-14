@@ -137,222 +137,317 @@ const QrGenerator: React.FC = () => {
   }, [inputText, generateQRCode]);
 
   return (
-    <div className="qr-generator-container">
-      <div className="qr-generator-header">
-        <h2>QR 생성기</h2>
-        <button className="clear-btn" onClick={clearAll}>전체 지우기</button>
+    <div className="page-container">
+      <div className="page-header">
+        <div className="header-icon">📱</div>
+        <h1 className="page-title">QR 생성기</h1>
+        <p className="page-subtitle">다양한 형식의 QR 코드를 쉽게 생성하고 커스터마이징하세요</p>
       </div>
 
-      <div className="qr-content">
-        <div className="qr-input-section">
-          <div className="input-group">
-            <label>변환할 텍스트</label>
-            <textarea
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              placeholder="URL, 텍스트, 이메일, 전화번호 등을 입력하세요..."
-              rows={5}
-            />
-            <div className="character-count">
-              {inputText.length} 문자
-            </div>
-          </div>
+      <div className="action-section">
+        <button className="btn-secondary" onClick={clearAll}>
+          <span className="btn-icon">🗑️</span>
+          전체 지우기
+        </button>
+      </div>
 
-          <div className="preset-buttons">
-            <h3>빠른 입력</h3>
-            <div className="preset-grid">
-              <button onClick={() => loadPresets('url')}>웹사이트 URL</button>
-              <button onClick={() => loadPresets('email')}>이메일</button>
-              <button onClick={() => loadPresets('phone')}>전화번호</button>
-              <button onClick={() => loadPresets('sms')}>SMS</button>
-              <button onClick={() => loadPresets('wifi')}>WiFi</button>
-              <button onClick={() => loadPresets('vcard')}>연락처 (vCard)</button>
-            </div>
-          </div>
-
-          <div className="qr-options">
-            <h3>QR 코드 설정</h3>
-            
-            <div className="option-row">
-              <label>오류 정정 수준</label>
-              <select
-                value={qrOptions.errorCorrectionLevel}
-                onChange={(e) => setQrOptions({
-                  ...qrOptions,
-                  errorCorrectionLevel: e.target.value as QROptions['errorCorrectionLevel']
-                })}
-              >
-                <option value="L">낮음 (~7%)</option>
-                <option value="M">중간 (~15%)</option>
-                <option value="Q">높음 (~25%)</option>
-                <option value="H">최고 (~30%)</option>
-              </select>
-            </div>
-
-            <div className="option-row">
-              <label>크기 (픽셀)</label>
-              <input
-                type="range"
-                min="128"
-                max="512"
-                step="32"
-                value={qrOptions.width}
-                onChange={(e) => setQrOptions({
-                  ...qrOptions,
-                  width: Number(e.target.value)
-                })}
-              />
-              <span>{qrOptions.width}px</span>
-            </div>
-
-            <div className="option-row">
-              <label>여백</label>
-              <input
-                type="range"
-                min="0"
-                max="10"
-                value={qrOptions.margin}
-                onChange={(e) => setQrOptions({
-                  ...qrOptions,
-                  margin: Number(e.target.value)
-                })}
-              />
-              <span>{qrOptions.margin}</span>
-            </div>
-
-            <div className="color-options">
-              <div className="color-group">
-                <label>전경색</label>
-                <input
-                  type="color"
-                  value={qrOptions.color.dark}
-                  onChange={(e) => setQrOptions({
-                    ...qrOptions,
-                    color: { ...qrOptions.color, dark: e.target.value }
-                  })}
-                />
-              </div>
-              <div className="color-group">
-                <label>배경색</label>
-                <input
-                  type="color"
-                  value={qrOptions.color.light}
-                  onChange={(e) => setQrOptions({
-                    ...qrOptions,
-                    color: { ...qrOptions.color, light: e.target.value }
-                  })}
-                />
-              </div>
-            </div>
-
-            <div className="option-row">
-              <label>파일 형식</label>
-              <select
-                value={qrOptions.type}
-                onChange={(e) => setQrOptions({
-                  ...qrOptions,
-                  type: e.target.value as QROptions['type']
-                })}
-              >
-                <option value="image/png">PNG</option>
-                <option value="image/jpeg">JPEG</option>
-              </select>
-            </div>
-
-            {qrOptions.type === 'image/jpeg' && (
-              <div className="option-row">
-                <label>품질</label>
-                <input
-                  type="range"
-                  min="0.1"
-                  max="1"
-                  step="0.1"
-                  value={qrOptions.quality}
-                  onChange={(e) => setQrOptions({
-                    ...qrOptions,
-                    quality: Number(e.target.value)
-                  })}
-                />
-                <span>{Math.round(qrOptions.quality * 100)}%</span>
-              </div>
-            )}
+      <div className="section">
+        <h3 className="section-title">텍스트 입력</h3>
+        <div className="form-grid">
+          <textarea
+            value={inputText}
+            onChange={(e) => setInputText(e.target.value)}
+            placeholder="URL, 텍스트, 이메일, 전화번호 등을 입력하세요..."
+            className="form-textarea"
+            rows={5}
+          />
+          <div className="character-count">
+            문자 수: {inputText.length}
           </div>
         </div>
+      </div>
 
-        <div className="qr-output-section">
-          <div className="qr-preview">
-            <h3>QR 코드 미리보기</h3>
-            
-            {error && (
-              <div className="error-message">{error}</div>
-            )}
+      <div className="section">
+        <h3 className="section-title">빠른 입력 템플릿</h3>
+        <div className="preset-grid">
+          <button className="btn-secondary" onClick={() => loadPresets('url')}>
+            <span className="btn-icon">🌐</span>
+            웹사이트 URL
+          </button>
+          <button className="btn-secondary" onClick={() => loadPresets('email')}>
+            <span className="btn-icon">📧</span>
+            이메일
+          </button>
+          <button className="btn-secondary" onClick={() => loadPresets('phone')}>
+            <span className="btn-icon">📞</span>
+            전화번호
+          </button>
+          <button className="btn-secondary" onClick={() => loadPresets('sms')}>
+            <span className="btn-icon">💬</span>
+            SMS
+          </button>
+          <button className="btn-secondary" onClick={() => loadPresets('wifi')}>
+            <span className="btn-icon">📶</span>
+            WiFi
+          </button>
+          <button className="btn-secondary" onClick={() => loadPresets('vcard')}>
+            <span className="btn-icon">👤</span>
+            연락처 (vCard)
+          </button>
+        </div>
+      </div>
 
-            {isLoading && (
-              <div className="loading">QR 코드 생성 중...</div>
-            )}
+      <div className="section">
+        <h3 className="section-title">QR 코드 설정</h3>
+        <div className="qr-options-grid">
+          <div className="option-group">
+            <label className="form-label">오류 정정 수준</label>
+            <select
+              value={qrOptions.errorCorrectionLevel}
+              onChange={(e) => setQrOptions({
+                ...qrOptions,
+                errorCorrectionLevel: e.target.value as QROptions['errorCorrectionLevel']
+              })}
+              className="form-select"
+            >
+              <option value="L">낮음 (~7%)</option>
+              <option value="M">중간 (~15%)</option>
+              <option value="Q">높음 (~25%)</option>
+              <option value="H">최고 (~30%)</option>
+            </select>
+          </div>
 
-            <div className="qr-display">
-              <canvas
-                ref={canvasRef}
-                style={{ display: qrCodeUrl ? 'block' : 'none' }}
+          <div className="option-group">
+            <label className="form-label">크기: {qrOptions.width}px</label>
+            <input
+              type="range"
+              min="128"
+              max="512"
+              step="32"
+              value={qrOptions.width}
+              onChange={(e) => setQrOptions({
+                ...qrOptions,
+                width: Number(e.target.value)
+              })}
+              className="form-range"
+            />
+          </div>
+
+          <div className="option-group">
+            <label className="form-label">여백: {qrOptions.margin}</label>
+            <input
+              type="range"
+              min="0"
+              max="10"
+              value={qrOptions.margin}
+              onChange={(e) => setQrOptions({
+                ...qrOptions,
+                margin: Number(e.target.value)
+              })}
+              className="form-range"
+            />
+          </div>
+
+          <div className="color-options">
+            <div className="color-group">
+              <label className="form-label">전경색</label>
+              <input
+                type="color"
+                value={qrOptions.color.dark}
+                onChange={(e) => setQrOptions({
+                  ...qrOptions,
+                  color: { ...qrOptions.color, dark: e.target.value }
+                })}
+                className="form-color"
               />
-              {!qrCodeUrl && !isLoading && !error && (
-                <div className="placeholder">
-                  텍스트를 입력하면 QR 코드가 생성됩니다.
-                </div>
-              )}
             </div>
-
-            {qrCodeUrl && (
-              <div className="qr-actions">
-                <button className="download-btn" onClick={downloadQRCode}>
-                  다운로드
-                </button>
-                <button className="copy-btn" onClick={copyToClipboard}>
-                  클립보드에 복사
-                </button>
-              </div>
-            )}
-          </div>
-
-          <div className="qr-info">
-            <h3>QR 코드 정보</h3>
-            <div className="info-list">
-              <div className="info-item">
-                <span>입력 길이:</span>
-                <span>{inputText.length} 문자</span>
-              </div>
-              <div className="info-item">
-                <span>크기:</span>
-                <span>{qrOptions.width} × {qrOptions.width}px</span>
-              </div>
-              <div className="info-item">
-                <span>오류 정정:</span>
-                <span>{qrOptions.errorCorrectionLevel} 수준</span>
-              </div>
-              <div className="info-item">
-                <span>파일 형식:</span>
-                <span>{qrOptions.type.split('/')[1].toUpperCase()}</span>
-              </div>
-              {qrCodeUrl && (
-                <div className="info-item">
-                  <span>파일 크기:</span>
-                  <span>{Math.round(qrCodeUrl.length * 0.75 / 1024)} KB</span>
-                </div>
-              )}
+            <div className="color-group">
+              <label className="form-label">배경색</label>
+              <input
+                type="color"
+                value={qrOptions.color.light}
+                onChange={(e) => setQrOptions({
+                  ...qrOptions,
+                  color: { ...qrOptions.color, light: e.target.value }
+                })}
+                className="form-color"
+              />
             </div>
           </div>
 
-          <div className="usage-tips">
-            <h3>사용 팁</h3>
-            <ul>
-              <li>URL은 http:// 또는 https://로 시작해야 합니다</li>
-              <li>WiFi: WIFI:T:WPA;S:네트워크명;P:비밀번호;H:false;</li>
-              <li>전화: tel:+82-10-1234-5678</li>
-              <li>이메일: mailto:user@example.com</li>
-              <li>SMS: sms:+82-10-1234-5678?body=메시지내용</li>
-              <li>높은 오류 정정 수준은 QR 코드가 손상되어도 읽을 수 있게 합니다</li>
-            </ul>
+          <div className="option-group">
+            <label className="form-label">파일 형식</label>
+            <select
+              value={qrOptions.type}
+              onChange={(e) => setQrOptions({
+                ...qrOptions,
+                type: e.target.value as QROptions['type']
+              })}
+              className="form-select"
+            >
+              <option value="image/png">PNG</option>
+              <option value="image/jpeg">JPEG</option>
+            </select>
+          </div>
+
+          {qrOptions.type === 'image/jpeg' && (
+            <div className="option-group">
+              <label className="form-label">품질: {Math.round(qrOptions.quality * 100)}%</label>
+              <input
+                type="range"
+                min="0.1"
+                max="1"
+                step="0.1"
+                value={qrOptions.quality}
+                onChange={(e) => setQrOptions({
+                  ...qrOptions,
+                  quality: Number(e.target.value)
+                })}
+                className="form-range"
+              />
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="section">
+        <h3 className="section-title">QR 코드 미리보기</h3>
+        
+        {error && (
+          <div className="notification notification-error">
+            <span className="notification-icon">❌</span>
+            {error}
+          </div>
+        )}
+
+        {isLoading && (
+          <div className="notification notification-info">
+            <span className="notification-icon">⏳</span>
+            QR 코드 생성 중...
+          </div>
+        )}
+
+        <div className="qr-display">
+          <canvas
+            ref={canvasRef}
+            style={{ display: qrCodeUrl ? 'block' : 'none' }}
+            className="qr-canvas"
+          />
+          {!qrCodeUrl && !isLoading && !error && (
+            <div className="empty-state">
+              <div className="empty-state-icon">📱</div>
+              <div className="empty-state-text">텍스트를 입력하면 QR 코드가 생성됩니다.</div>
+            </div>
+          )}
+        </div>
+
+        {qrCodeUrl && (
+          <div className="qr-actions">
+            <button className="btn-primary" onClick={downloadQRCode}>
+              <span className="btn-icon">💾</span>
+              다운로드
+            </button>
+            <button className="btn-secondary" onClick={copyToClipboard}>
+              <span className="btn-icon">📋</span>
+              클립보드에 복사
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className="section">
+        <h3 className="section-title">
+          <span className="section-icon">ℹ️</span>
+          QR 코드 정보
+        </h3>
+        <div className="info-grid">
+          <div className="info-card">
+            <div className="info-icon">📏</div>
+            <div className="info-content">
+              <span className="info-label">입력 길이</span>
+              <span className="info-value">{inputText.length} 문자</span>
+            </div>
+          </div>
+          <div className="info-card">
+            <div className="info-icon">📐</div>
+            <div className="info-content">
+              <span className="info-label">크기</span>
+              <span className="info-value">{qrOptions.width} × {qrOptions.width}px</span>
+            </div>
+          </div>
+          <div className="info-card">
+            <div className="info-icon">🔧</div>
+            <div className="info-content">
+              <span className="info-label">오류 정정</span>
+              <span className="info-value">{qrOptions.errorCorrectionLevel} 수준</span>
+            </div>
+          </div>
+          <div className="info-card">
+            <div className="info-icon">🗂️</div>
+            <div className="info-content">
+              <span className="info-label">파일 형식</span>
+              <span className="info-value">{qrOptions.type.split('/')[1].toUpperCase()}</span>
+            </div>
+          </div>
+          {qrCodeUrl && (
+            <div className="info-card">
+              <div className="info-icon">💽</div>
+              <div className="info-content">
+                <span className="info-label">파일 크기</span>
+                <span className="info-value">{Math.round(qrCodeUrl.length * 0.75 / 1024)} KB</span>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="section">
+        <h3 className="section-title">
+          <span className="section-icon">💡</span>
+          사용 팁
+        </h3>
+        <div className="tips-grid">
+          <div className="tip-card">
+            <div className="tip-icon">🌐</div>
+            <div className="tip-content">
+              <strong>URL</strong>
+              <span>http:// 또는 https://로 시작</span>
+            </div>
+          </div>
+          <div className="tip-card">
+            <div className="tip-icon">📶</div>
+            <div className="tip-content">
+              <strong>WiFi</strong>
+              <span>WIFI:T:WPA;S:네트워크명;P:비밀번호;H:false;</span>
+            </div>
+          </div>
+          <div className="tip-card">
+            <div className="tip-icon">📞</div>
+            <div className="tip-content">
+              <strong>전화</strong>
+              <span>tel:+82-10-1234-5678</span>
+            </div>
+          </div>
+          <div className="tip-card">
+            <div className="tip-icon">📧</div>
+            <div className="tip-content">
+              <strong>이메일</strong>
+              <span>mailto:user@example.com</span>
+            </div>
+          </div>
+          <div className="tip-card">
+            <div className="tip-icon">💬</div>
+            <div className="tip-content">
+              <strong>SMS</strong>
+              <span>sms:+82-10-1234-5678?body=메시지내용</span>
+            </div>
+          </div>
+          <div className="tip-card">
+            <div className="tip-icon">🔧</div>
+            <div className="tip-content">
+              <strong>오류 정정</strong>
+              <span>높은 수준은 손상되어도 읽을 수 있게 합니다</span>
+            </div>
           </div>
         </div>
       </div>

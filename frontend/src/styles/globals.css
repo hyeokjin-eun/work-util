@@ -114,13 +114,32 @@ select:focus {
 
 .page-header {
   margin-bottom: 1.5rem;
+  background: #3b82f6;
+  padding: 2rem 0;
+  text-align: center;
+  border-radius: 0;
 }
 
 .page-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--primary-black);
+  color: #fff;
   letter-spacing: -0.5px;
+  margin: 0;
+}
+
+.page-subtitle {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0.5rem 0 0 0;
+  line-height: 1.5;
+}
+
+.header-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.9;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
 /* Sections */

@@ -245,95 +245,161 @@ const JsonCompare: React.FC = () => {
   }, [performComparison]);
 
   return (
-    <div className="json-compare-container">
-      <div className="json-compare-header">
-        <h2>JSON 비교기</h2>
-        <div className="compare-actions">
-          <button className="sample-btn" onClick={loadSampleData}>샘플 데이터</button>
-          <button className="clear-btn" onClick={clearAll}>전체 지우기</button>
+    <div className="page-container">
+      <div className="page-header">
+        <div className="header-icon">🔍</div>
+        <h1 className="page-title">JSON 비교기</h1>
+        <p className="page-subtitle">두 JSON 데이터를 비교하여 차이점을 시각화합니다</p>
+      </div>
+
+      <div className="action-section">
+        <div className="actions-grid">
+          <button className="btn-primary" onClick={loadSampleData}>
+            <span className="btn-icon">📝</span>
+            샘플 데이터 로드
+          </button>
+          <button className="btn-secondary" onClick={clearAll}>
+            <span className="btn-icon">🗑️</span>
+            전체 지우기
+          </button>
         </div>
       </div>
 
-      <div className="json-inputs">
-        <div className="input-section">
-          <h3>원본 JSON</h3>
-          <textarea
-            className="json-input"
-            value={leftJson}
-            onChange={(e) => setLeftJson(e.target.value)}
-            placeholder="첫 번째 JSON 데이터를 입력하세요..."
-            rows={15}
-          />
-          {leftError && <div className="error-message">{leftError}</div>}
-        </div>
+      <div className="section">
+        <h3 className="section-title">JSON 입력</h3>
+        <div className="json-inputs-grid">
+          <div className="input-section">
+            <div className="section-header">
+              <h4>원본 JSON</h4>
+            </div>
+            <textarea
+              className="json-textarea"
+              value={leftJson}
+              onChange={(e) => setLeftJson(e.target.value)}
+              placeholder="첫 번째 JSON 데이터를 입력하세요..."
+              rows={15}
+            />
+            {leftError && (
+              <div className="notification notification-error">
+                <span className="notification-icon">❌</span>
+                {leftError}
+              </div>
+            )}
+          </div>
 
-        <div className="input-section">
-          <h3>비교할 JSON</h3>
-          <textarea
-            className="json-input"
-            value={rightJson}
-            onChange={(e) => setRightJson(e.target.value)}
-            placeholder="두 번째 JSON 데이터를 입력하세요..."
-            rows={15}
-          />
-          {rightError && <div className="error-message">{rightError}</div>}
+          <div className="input-section">
+            <div className="section-header">
+              <h4>비교할 JSON</h4>
+            </div>
+            <textarea
+              className="json-textarea"
+              value={rightJson}
+              onChange={(e) => setRightJson(e.target.value)}
+              placeholder="두 번째 JSON 데이터를 입력하세요..."
+              rows={15}
+            />
+            {rightError && (
+              <div className="notification notification-error">
+                <span className="notification-icon">❌</span>
+                {rightError}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
       {comparisonResults.length > 0 && (
         <>
-          <div className="comparison-summary">
-            <h3>비교 결과 요약</h3>
+          <div className="section">
+            <h3 className="section-title">
+              <span className="section-icon">📊</span>
+              비교 결과 요약
+            </h3>
             <div className="summary-stats">
-              <div className="stat-item total">
-                <span>전체: {summary.total}</span>
+              <div className="stat-card total">
+                <div className="stat-icon">📋</div>
+                <div className="stat-content">
+                  <span className="stat-label">전체</span>
+                  <span className="stat-value">{summary.total}</span>
+                </div>
               </div>
-              <div className="stat-item added">
-                <span>추가: {summary.added}</span>
+              <div className="stat-card added">
+                <div className="stat-icon">➕</div>
+                <div className="stat-content">
+                  <span className="stat-label">추가</span>
+                  <span className="stat-value">{summary.added}</span>
+                </div>
               </div>
-              <div className="stat-item removed">
-                <span>삭제: {summary.removed}</span>
+              <div className="stat-card removed">
+                <div className="stat-icon">➖</div>
+                <div className="stat-content">
+                  <span className="stat-label">삭제</span>
+                  <span className="stat-value">{summary.removed}</span>
+                </div>
               </div>
-              <div className="stat-item modified">
-                <span>수정: {summary.modified}</span>
+              <div className="stat-card modified">
+                <div className="stat-icon">🔄</div>
+                <div className="stat-content">
+                  <span className="stat-label">수정</span>
+                  <span className="stat-value">{summary.modified}</span>
+                </div>
               </div>
-              <div className="stat-item unchanged">
-                <span>동일: {summary.unchanged}</span>
+              <div className="stat-card unchanged">
+                <div className="stat-icon">✓</div>
+                <div className="stat-content">
+                  <span className="stat-label">동일</span>
+                  <span className="stat-value">{summary.unchanged}</span>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="comparison-controls">
-            <label>
-              <input
-                type="checkbox"
-                checked={showOnlyDifferences}
-                onChange={(e) => setShowOnlyDifferences(e.target.checked)}
-              />
-              차이점만 표시
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                checked={sortResults}
-                onChange={(e) => setSortResults(e.target.checked)}
-              />
-              경로별 정렬
-            </label>
+          <div className="section">
+            <h3 className="section-title">표시 옵션</h3>
+            <div className="controls-grid">
+              <div className="control-group">
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={showOnlyDifferences}
+                    onChange={(e) => setShowOnlyDifferences(e.target.checked)}
+                    className="checkbox-input"
+                  />
+                  <span className="checkbox-text">차이점만 표시</span>
+                </label>
+              </div>
+              <div className="control-group">
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={sortResults}
+                    onChange={(e) => setSortResults(e.target.checked)}
+                    className="checkbox-input"
+                  />
+                  <span className="checkbox-text">경로별 정렬</span>
+                </label>
+              </div>
+            </div>
           </div>
 
-          <div className="comparison-results">
-            <h3>상세 비교 결과</h3>
-            <div className="results-list">
+          <div className="section">
+            <h3 className="section-title">
+              상세 비교 결과
+              <span className="count-badge">{filteredResults.length}</span>
+            </h3>
+            <div className="results-grid">
               {filteredResults.length === 0 ? (
-                <div className="no-results">표시할 결과가 없습니다.</div>
+                <div className="empty-state">
+                  <div className="empty-state-icon">🔍</div>
+                  <div className="empty-state-text">표시할 결과가 없습니다.</div>
+                </div>
               ) : (
                 filteredResults.map((result, index) => (
-                  <div key={index} className={`result-item ${result.type}`}>
+                  <div key={index} className={`result-card ${result.type}`}>
                     <div className="result-header">
                       <span className="type-icon">{getTypeIcon(result.type)}</span>
-                      <span className="path">{result.path}</span>
-                      <span className={`type-label ${result.type}`}>
+                      <span className="result-path">{result.path}</span>
+                      <span className={`type-badge ${result.type}`}>
                         {result.type === 'added' && '추가됨'}
                         {result.type === 'removed' && '삭제됨'}
                         {result.type === 'modified' && '수정됨'}

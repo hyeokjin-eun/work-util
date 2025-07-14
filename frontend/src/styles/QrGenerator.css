@@ -41,12 +41,21 @@
 .page-title {
   font-size: 1.75rem;
   font-weight: 700;
-  color: var(--primary-white);
+  color: #fff;
   margin: 0 0 0.5rem 0;
   letter-spacing: -0.5px;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: relative;
   z-index: 1;
+}
+
+.page-logo {
+  height: 60px;
+  width: auto;
+  margin: 0 0 0.5rem 0;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
 .page-subtitle {

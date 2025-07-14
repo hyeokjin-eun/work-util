@@ -170,87 +170,129 @@ backend/
 - `GET /api/protected/profile` - 사용자 프로필
 - `GET /api/protected/dashboard` - 대시보드
 
-## 🚀 **완전 자동 배포 가이드**
+## 🚀 **자동 배포 스크립트**
 
-> **이 가이드를 따라하면 처음부터 끝까지 완전히 배포할 수 있습니다**
+> **새로운 배포 스크립트를 사용하여 간편하게 배포하세요!**
 
-### ⚙️ **사전 요구사항**
+### 📦 **deploy-production.sh 사용법**
+
+가장 간단하고 안전한 배포 방법:
+
+```bash
+# 프로젝트 디렉토리로 이동
+cd /home/gurwls2399/work-space/work-util
+
+# 스크립트 실행 권한 부여 (최초 1회)
+chmod +x deploy-production.sh
+
+# 전체 배포 (백엔드 + 프론트엔드 + Nginx)
+./deploy-production.sh full
+
+# 빠른 재배포 (기존 환경 재사용)
+./deploy-production.sh quick
+
+# 백엔드만 배포
+./deploy-production.sh backend
+
+# 프론트엔드만 배포  
+./deploy-production.sh frontend
+```
+
+### 🔧 **배포 스크립트 명령어**
+
+| 명령어 | 설명 | 사용 예시 |
+|--------|------|----------|
+| `full` | 전체 배포 (처음 배포시) | `./deploy-production.sh full` |
+| `quick` | 빠른 재배포 (코드 수정 후) | `./deploy-production.sh quick` |
+| `backend` | 백엔드만 배포 | `./deploy-production.sh backend` |
+| `frontend` | 프론트엔드만 배포 | `./deploy-production.sh frontend` |
+| `status` | 서비스 상태 확인 | `./deploy-production.sh status` |
+| `logs` | 로그 확인 | `./deploy-production.sh logs backend` |
+| `stop` | 서비스 중지 | `./deploy-production.sh stop` |
+
+### ⚡ **빠른 시작 (권장)**
+
+```bash
+# 1. 전체 배포 (최초 배포)
+./deploy-production.sh full
+
+# 2. 코드 수정 후 빠른 재배포
+./deploy-production.sh quick
+
+# 3. 상태 확인
+./deploy-production.sh status
+```
+
+### 📊 **모니터링 및 관리**
+
+```bash
+# 서비스 상태 확인
+./deploy-production.sh status
+
+# 백엔드 로그 실시간 확인
+./deploy-production.sh logs backend
+
+# Nginx 로그 실시간 확인  
+./deploy-production.sh logs nginx
+
+# 서비스 중지
+./deploy-production.sh stop
+```
+
+### 🛠️ **수동 배포 가이드 (참고용)**
+
+배포 스크립트 사용을 권장하지만, 수동 배포가 필요한 경우:
+
+<details>
+<summary>수동 배포 단계별 가이드 (클릭하여 펼치기)</summary>
+
+#### ⚙️ **사전 요구사항**
 - Ubuntu/CentOS 서버
 - nginx, python3, node.js 설치됨
 - next-exit.me 도메인이 서버 IP로 설정됨
 - Let's Encrypt SSL 인증서 발급됨
 
-### 🔄 **1단계: 백엔드 서버 배포**
+#### 🔄 **1단계: 백엔드 서버 배포**
 ```bash
-# 프로젝트 디렉토리로 이동
 cd /home/gurwls2399/work-space/work-util/backend
-
-# 기존 프로세스 종료 (재배포시)
 pkill -f "python main.py" || true
-
-# Python 가상환경 설정
 python3 -m venv venv
 source venv/bin/activate
-
-# 의존성 설치 (호환성 확인된 버전)
 pip install --upgrade pip
 pip install -r requirements.txt
-
-# 환경설정 확인
-cp .env.example .env 2>/dev/null || true
 echo "SECRET_KEY=prod-secret-key-$(date +%s)" > .env
 echo "ALGORITHM=HS256" >> .env
 echo "ACCESS_TOKEN_EXPIRE_MINUTES=30" >> .env
 echo "DATABASE_URL=sqlite:///./app.db" >> .env
-
-# 백그라운드 서버 실행
 nohup python main.py > backend.log 2>&1 &
 sleep 3
-
-# 백엔드 동작 확인
 curl -s http://localhost:8000/api/health
-echo "✅ 백엔드 서버 실행 완료"
 ```
 
-### 🎨 **2단계: 프론트엔드 빌드 및 배포**
+#### 🎨 **2단계: 프론트엔드 빌드 및 배포**
 ```bash
-# 프론트엔드 디렉토리로 이동  
 cd /home/gurwls2399/work-space/work-util/frontend
-
-# 기존 빌드 정리
 rm -rf build node_modules 2>/dev/null || true
-
-# 의존성 설치 및 빌드
 npm install
 npm run build
-
-# 웹 서버 디렉토리 설정
-rm -rf /var/www/work-util 2>/dev/null || true
-mkdir -p /var/www/work-util
-cp -r build/* /var/www/work-util/
-
-# 권한 설정
-chmod -R 755 /var/www/work-util
-chown -R nginx:nginx /var/www/work-util 2>/dev/null || chown -R www-data:www-data /var/www/work-util
-
-echo "✅ 프론트엔드 빌드 및 배포 완료"
+sudo rm -rf /var/www/work-util 2>/dev/null || true
+sudo mkdir -p /var/www/work-util
+sudo cp -r build/* /var/www/work-util/
+sudo chmod -R 755 /var/www/work-util
+sudo chown -R nginx:nginx /var/www/work-util 2>/dev/null || sudo chown -R www-data:www-data /var/www/work-util
 ```
 
-### 🌐 **3단계: Nginx 설정**
+#### 🌐 **3단계: Nginx 설정**
 ```bash
-# 기존 설정 백업
-cp /etc/nginx/conf.d/work-util.conf /etc/nginx/conf.d/work-util.conf.backup.$(date +%Y%m%d_%H%M%S) 2>/dev/null || true
+sudo cp /etc/nginx/conf.d/work-util.conf /etc/nginx/conf.d/work-util.conf.backup.$(date +%Y%m%d_%H%M%S) 2>/dev/null || true
 
-# 새 설정 적용
-cat > /etc/nginx/conf.d/work-util.conf << 'EOF'
-# HTTP to HTTPS redirect
+sudo tee /etc/nginx/conf.d/work-util.conf > /dev/null << 'EOF'
 server {
     listen 80;
     server_name next-exit.me;
     return 301 https://$server_name$request_uri;
 }
 
-# HTTPS server
 server {
     listen 443 ssl http2;
     server_name next-exit.me;
@@ -258,20 +300,17 @@ server {
     ssl_certificate /etc/letsencrypt/live/next-exit.me/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/next-exit.me/privkey.pem;
     
-    # 프론트엔드 정적 파일 서빙
     location / {
         root /var/www/work-util;
         index index.html index.htm;
         try_files $uri $uri/ /index.html;
         
-        # 캐시 설정
-        location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+        location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
             expires 1y;
             add_header Cache-Control "public, immutable";
         }
     }
 
-    # 백엔드 API 프록시
     location /api/ {
         proxy_pass http://127.0.0.1:8000/api/;
         proxy_set_header Host $host;
@@ -279,7 +318,6 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
         
-        # CORS 헤더
         add_header Access-Control-Allow-Origin "*" always;
         add_header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS" always;
         add_header Access-Control-Allow-Headers "Authorization, Content-Type" always;
@@ -289,7 +327,6 @@ server {
         }
     }
 
-    # API 문서
     location /docs {
         proxy_pass http://127.0.0.1:8000;
         proxy_set_header Host $host;
@@ -298,7 +335,6 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 
-    # OpenAPI JSON
     location /openapi.json {
         proxy_pass http://127.0.0.1:8000;
         proxy_set_header Host $host;
@@ -309,71 +345,71 @@ server {
 }
 EOF
 
-# 설정 검사 및 적용
-nginx -t && systemctl reload nginx
-
-# SELinux 설정 (필요시)
-setenforce 0 2>/dev/null || true
-
-echo "✅ Nginx 설정 완료"
+sudo nginx -t && sudo systemctl reload nginx
 ```
 
-### ✅ **4단계: 배포 검증**
+#### ✅ **4단계: 배포 검증**
 ```bash
-echo "🔍 배포 검증 시작..."
-
-# 백엔드 API 확인
-echo "백엔드 API 테스트:"
-curl -s http://localhost:8000/api/health || echo "❌ 백엔드 연결 실패"
-
-# 프론트엔드 확인  
-echo "프론트엔드 테스트:"
-curl -s -I http://localhost | grep "HTTP" || echo "❌ 프론트엔드 연결 실패"
-
-# HTTPS 확인
-echo "HTTPS 테스트:"
-curl -s -I https://next-exit.me | grep "HTTP" || echo "❌ HTTPS 연결 실패"
-
-# 프로세스 확인
-echo "실행 중인 서비스:"
+curl -s http://localhost:8000/api/health
+curl -s -I http://localhost | grep "HTTP"
+curl -s -I https://next-exit.me | grep "HTTP"
 ps aux | grep -E "(python main.py|nginx)" | grep -v grep
-
-echo "🎉 배포 검증 완료!"
-echo "접속 URL: https://next-exit.me"
 ```
 
-### 🔧 **재배포 원라이너 (빠른 업데이트)**
-```bash
-# 전체 재배포 (한번에 실행)
-cd /home/gurwls2399/work-space/work-util && \
-pkill -f "python main.py" || true && \
-cd backend && source venv/bin/activate && pip install -r requirements.txt && nohup python main.py > backend.log 2>&1 & \
-cd ../frontend && npm run build && rm -rf /var/www/work-util/* && cp -r build/* /var/www/work-util/ && chmod -R 755 /var/www/work-util && \
-systemctl reload nginx && \
-echo "✅ 재배포 완료: https://next-exit.me"
-```
+</details>
 
 ### 🚨 **문제 해결**
+
 ```bash
-# 백엔드 로그 확인
-tail -f /home/gurwls2399/work-space/work-util/backend/backend.log
+# 로그 확인
+./deploy-production.sh logs backend    # 백엔드 로그
+./deploy-production.sh logs nginx      # Nginx 로그
 
-# Nginx 로그 확인  
-tail -f /var/log/nginx/error.log
+# 서비스 상태 확인
+./deploy-production.sh status
 
-# 포트 확인
-netstat -tlnp | grep -E ":80|:443|:8000"
+# 서비스 재시작
+./deploy-production.sh stop
+./deploy-production.sh quick
 
-# 프로세스 재시작
-pkill -f "python main.py" && cd /home/gurwls2399/work-space/work-util/backend && source venv/bin/activate && nohup python main.py > backend.log 2>&1 &
+# 수동 프로세스 재시작
+pkill -f "python main.py"
+cd /home/gurwls2399/work-space/work-util/backend
+source venv/bin/activate
+nohup python main.py > backend.log 2>&1 &
+```
+
+## 📜 **프로젝트 스크립트**
+
+프로젝트 루트에 있는 배포 및 관리 스크립트들:
+
+| 스크립트 | 용도 | 설명 |
+|---------|------|------|
+| `deploy.sh` | Docker 배포 | Docker Compose 기반 개발/프로덕션 배포 |
+| `deploy-nginx.sh` | Nginx 관리 | Nginx 설정 및 관리 (메뉴 방식) |
+| `deploy-production.sh` | **실제 배포** | **실제 운영용 nginx 배포 (권장)** |
+
+### 🎯 **권장 사용법**
+
+```bash
+# 운영 배포 (가장 많이 사용)
+./deploy-production.sh quick
+
+# 개발 환경 (Docker)
+./deploy.sh dev
+
+# Nginx 고급 관리 (필요시)
+sudo ./deploy-nginx.sh
 ```
 
 ### 📊 **현재 서비스 상태**
+
 - 🌐 **URL**: https://next-exit.me
 - 🔐 **인증**: JWT 기반 로그인/회원가입
 - 📋 **기능**: 할일관리, 회의록, JSON도구, QR생성기, WBS관리
 - 🔄 **자동 HTTPS**: HTTP → HTTPS 리다이렉트
 - 📈 **모니터링**: 로그 기반 상태 확인
+- 🚀 **배포**: `deploy-production.sh` 스크립트 사용
 
 ## 🤝 기여하기
 

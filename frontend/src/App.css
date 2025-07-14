@@ -36,6 +36,12 @@
   letter-spacing: -0.3px;
 }
 
+.header-logo {
+  height: 40px;
+  width: auto;
+  margin: 0;
+}
+
 .user-menu {
   display: flex;
   align-items: center;
@@ -158,7 +164,7 @@
 
 /* Hero Section */
 .hero-section {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  background: #3b82f6;
   padding: 2rem 0;
   margin-bottom: 2rem;
   border-bottom: 1px solid var(--medium-gray);
@@ -190,7 +196,7 @@
 .hero-slide h2 {
   font-size: 1.75rem;
   font-weight: 700;
-  color: var(--primary-black);
+  color: var(--primary-white);
   margin-bottom: 1rem;
   line-height: 1.3;
   letter-spacing: -0.5px;
@@ -200,7 +206,7 @@
 
 .hero-slide p {
   font-size: 1rem;
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.9);
   line-height: 1.5;
   max-width: 300px;
   margin: 0 auto;
@@ -400,6 +406,7 @@
 @media (max-width: 475px) {
   .app {
     max-width: 100%;
+    margin: 0;
     box-shadow: none;
   }
 }

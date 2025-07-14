@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from './AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import '../styles/Auth.css';
-import logoSvg from '../assets/logo.svg';
+const logoImage = '/work_util_logo.png';
 
 const Register: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -43,18 +43,11 @@ const Register: React.FC = () => {
 
   return (
     <div className="auth-app">
-      <div className="auth-hero-section">
-        <div className="auth-hero-content">
-          <div className="auth-logo">
-            <img src={logoSvg} alt="Work Util Logo" className="logo-image" />
-          </div>
-          <h1 className="auth-hero-title">Work Util에\n가입하세요</h1>
-          <p className="auth-hero-subtitle">업무 효율을 높이는 스마트한 도구 모음</p>
-        </div>
-      </div>
-
       <div className="auth-main-content">
         <div className="auth-card">
+          <div className="auth-logo">
+            <img src={logoImage} alt="Work Util Logo" className="logo-image" />
+          </div>
           <h2 className="auth-card-title">회원가입</h2>
           
           <form onSubmit={handleSubmit} className="auth-form">

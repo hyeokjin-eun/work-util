@@ -41,12 +41,21 @@
 .page-title {
   font-size: 1.75rem;
   font-weight: 700;
-  color: var(--primary-white);
+  color: #fff;
   margin: 0 0 0.5rem 0;
   letter-spacing: -0.5px;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: relative;
   z-index: 1;
+}
+
+.page-logo {
+  height: 60px;
+  width: auto;
+  margin: 0 0 0.5rem 0;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 
 .page-subtitle {
@@ -991,15 +1000,19 @@
     font-size: 3rem;
   }
   
+  .page-container {
+    max-width: 100%;
+    margin: 0;
+  }
+  
   .wbs-container {
     max-width: 100%;
-    padding: 0 1rem;
+    padding: 0;
   }
   
   .projects-sidebar,
   .wbs-main {
-    margin-left: 0;
-    margin-right: 0;
-    border-radius: 0;
+    margin: 0 1rem 1rem;
+    border-radius: var(--border-radius-md);
   }
 }

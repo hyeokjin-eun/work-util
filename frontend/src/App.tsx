@@ -115,7 +115,7 @@ function TopHeader() {
   return (
     <header className="top-header">
       <div className="header-content">
-        <h1 className="page-title">{getPageTitle()}</h1>
+        <img src="/work_util_logo.png" alt="Work Util" className="header-logo" />
         <div className="user-menu">
           <span className="user-name">{user?.username}</span>
           <button onClick={logout} className="logout-btn">

@@ -178,58 +178,78 @@ const MeetingNotes: React.FC = () => {
   };
 
   return (
-    <div className="meeting-notes-container">
-      <div className="meeting-sidebar">
-        <div className="sidebar-header">
-          <h3>회의 목록</h3>
-          <button className="new-meeting-btn" onClick={() => setShowNewForm(true)}>
-            + 새 회의
-          </button>
-        </div>
-        <div className="meeting-list">
+    <div className="page-container">
+      <div className="page-header">
+        <div className="header-icon">📝</div>
+        <h1 className="page-title">회의록 메모</h1>
+        <p className="page-subtitle">구조화된 회의록 작성 및 액션 아이템 관리</p>
+      </div>
+      
+      <div className="action-section">
+        <button className="btn-primary add-meeting-btn" onClick={() => setShowNewForm(true)}>
+          <span className="btn-icon">+</span>
+          새 회의 작성
+        </button>
+      </div>
+
+      <div className="section meetings-section">
+        <h3 className="section-title">
+          회의 목록
+          <span className="count-badge">{meetings.length}</span>
+        </h3>
+        <div className="meetings-grid">
           {meetings.length === 0 ? (
-            <div className="empty-state">회의록이 없습니다.</div>
+            <div className="empty-state">
+              <div className="empty-state-icon">📝</div>
+              <div className="empty-state-text">회의록이 없습니다.<br />새로운 회의를 작성해보세요!</div>
+            </div>
           ) : (
             meetings.map(meeting => (
               <div
                 key={meeting.id}
-                className={`meeting-item ${selectedMeeting?.id === meeting.id ? 'active' : ''}`}
+                className={`meeting-card ${selectedMeeting?.id === meeting.id ? 'active' : ''}`}
                 onClick={() => {
                   setSelectedMeeting(meeting);
                   setShowNewForm(false);
                   setIsEditing(false);
                 }}
               >
-                <h4>{meeting.title}</h4>
-                <p>{meeting.date}</p>
+                <div className="meeting-header">
+                  <h4 className="meeting-title">{meeting.title}</h4>
+                  <span className="meeting-date">📅 {new Date(meeting.date).toLocaleDateString()}</span>
+                </div>
+                <div className="meeting-meta">
+                  <span className="participant-count">👥 {meeting.participants.length}명</span>
+                  <span className="agenda-count">📋 {meeting.agenda.length}개 안건</span>
+                </div>
+                {meeting.notes && (
+                  <div className="meeting-preview">{meeting.notes.substring(0, 100)}...</div>
+                )}
               </div>
             ))
           )}
         </div>
       </div>
 
-      <div className="meeting-content">
-        {showNewForm ? (
-          <div className="meeting-form">
-            <h2>새 회의 작성</h2>
-            <div className="form-group">
-              <label>회의 제목</label>
-              <input
-                type="text"
-                value={newMeeting.title || ''}
-                onChange={(e) => setNewMeeting({ ...newMeeting, title: e.target.value })}
-              />
-            </div>
-            <div className="form-group">
-              <label>회의 날짜</label>
-              <input
-                type="date"
-                value={newMeeting.date || ''}
-                onChange={(e) => setNewMeeting({ ...newMeeting, date: e.target.value })}
-              />
-            </div>
-            <div className="form-group">
-              <label>참석자</label>
+      {showNewForm && (
+        <div className="section add-meeting-form">
+          <h3 className="section-title">새 회의 작성</h3>
+          <div className="form-grid">
+            <input
+              type="text"
+              placeholder="회의 제목"
+              value={newMeeting.title || ''}
+              onChange={(e) => setNewMeeting({ ...newMeeting, title: e.target.value })}
+              className="form-input"
+            />
+            <input
+              type="date"
+              value={newMeeting.date || ''}
+              onChange={(e) => setNewMeeting({ ...newMeeting, date: e.target.value })}
+              className="form-input"
+            />
+            <div className="form-section">
+              <label className="form-label">참석자</label>
               <div className="input-with-button">
                 <input
                   type="text"
@@ -237,17 +257,18 @@ const MeetingNotes: React.FC = () => {
                   onChange={(e) => setParticipantInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && addParticipant()}
                   placeholder="참석자 이름"
+                  className="form-input"
                 />
-                <button onClick={addParticipant}>추가</button>
+                <button className="btn-secondary" onClick={addParticipant}>추가</button>
               </div>
-              <div className="tag-list">
+              <div className="tags-list">
                 {newMeeting.participants?.map((p, idx) => (
                   <span key={idx} className="tag">{p}</span>
                 ))}
               </div>
             </div>
-            <div className="form-group">
-              <label>안건</label>
+            <div className="form-section">
+              <label className="form-label">안건</label>
               <div className="input-with-button">
                 <input
                   type="text"
@@ -255,8 +276,9 @@ const MeetingNotes: React.FC = () => {
                   onChange={(e) => setAgendaInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && addAgenda()}
                   placeholder="안건 내용"
+                  className="form-input"
                 />
-                <button onClick={addAgenda}>추가</button>
+                <button className="btn-secondary" onClick={addAgenda}>추가</button>
               </div>
               <ol className="agenda-list">
                 {newMeeting.agenda?.map((item, idx) => (
@@ -264,35 +286,37 @@ const MeetingNotes: React.FC = () => {
                 ))}
               </ol>
             </div>
-            <div className="form-group">
-              <label>회의 내용</label>
-              <textarea
-                value={newMeeting.notes || ''}
-                onChange={(e) => setNewMeeting({ ...newMeeting, notes: e.target.value })}
-                rows={10}
-              />
-            </div>
-            <div className="form-group">
-              <label>액션 아이템</label>
+            <textarea
+              placeholder="회의 내용"
+              value={newMeeting.notes || ''}
+              onChange={(e) => setNewMeeting({ ...newMeeting, notes: e.target.value })}
+              className="form-textarea"
+              rows={10}
+            />
+            <div className="form-section">
+              <label className="form-label">액션 아이템</label>
               <div className="action-item-form">
                 <input
                   type="text"
                   placeholder="할 일"
                   value={newActionItem.task}
                   onChange={(e) => setNewActionItem({ ...newActionItem, task: e.target.value })}
+                  className="form-input"
                 />
                 <input
                   type="text"
                   placeholder="담당자"
                   value={newActionItem.assignee}
                   onChange={(e) => setNewActionItem({ ...newActionItem, assignee: e.target.value })}
+                  className="form-input"
                 />
                 <input
                   type="date"
                   value={newActionItem.dueDate}
                   onChange={(e) => setNewActionItem({ ...newActionItem, dueDate: e.target.value })}
+                  className="form-input"
                 />
-                <button onClick={addActionItem}>추가</button>
+                <button className="btn-secondary" onClick={addActionItem}>추가</button>
               </div>
               <div className="action-items-list">
                 {newMeeting.actionItems?.map((item) => (
@@ -305,8 +329,11 @@ const MeetingNotes: React.FC = () => {
               </div>
             </div>
             <div className="form-actions">
-              <button className="save-btn" onClick={addMeeting}>저장</button>
-              <button className="cancel-btn" onClick={() => {
+              <button className="btn-primary" onClick={addMeeting}>
+                <span className="btn-icon">💾</span>
+                저장
+              </button>
+              <button className="btn-secondary" onClick={() => {
                 setShowNewForm(false);
                 setNewMeeting({
                   title: '',
@@ -316,70 +343,88 @@ const MeetingNotes: React.FC = () => {
                   notes: '',
                   actionItems: []
                 });
-              }}>취소</button>
+              }}>
+                취소
+              </button>
             </div>
           </div>
-        ) : selectedMeeting ? (
-          <div className="meeting-detail">
-            {isEditing ? (
-              <div className="meeting-form">
-                <h2>회의 수정</h2>
-                <div className="form-group">
-                  <label>회의 제목</label>
-                  <input
-                    type="text"
-                    value={selectedMeeting.title}
-                    onChange={(e) => setSelectedMeeting({ ...selectedMeeting, title: e.target.value })}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>회의 내용</label>
-                  <textarea
-                    value={selectedMeeting.notes}
-                    onChange={(e) => setSelectedMeeting({ ...selectedMeeting, notes: e.target.value })}
-                    rows={10}
-                  />
-                </div>
+        </div>
+      )}
+
+      {selectedMeeting && !showNewForm && (
+        <div className="section meeting-detail">
+          {isEditing ? (
+            <>
+              <h3 className="section-title">회의 수정</h3>
+              <div className="form-grid">
+                <input
+                  type="text"
+                  value={selectedMeeting.title}
+                  onChange={(e) => setSelectedMeeting({ ...selectedMeeting, title: e.target.value })}
+                  className="form-input"
+                />
+                <textarea
+                  value={selectedMeeting.notes}
+                  onChange={(e) => setSelectedMeeting({ ...selectedMeeting, notes: e.target.value })}
+                  className="form-textarea"
+                  rows={10}
+                />
                 <div className="form-actions">
-                  <button className="save-btn" onClick={updateMeeting}>저장</button>
-                  <button className="cancel-btn" onClick={() => setIsEditing(false)}>취소</button>
+                  <button className="btn-primary" onClick={updateMeeting}>
+                    <span className="btn-icon">💾</span>
+                    저장
+                  </button>
+                  <button className="btn-secondary" onClick={() => setIsEditing(false)}>
+                    취소
+                  </button>
                 </div>
               </div>
-            ) : (
-              <>
-                <div className="meeting-header">
-                  <h2>{selectedMeeting.title}</h2>
-                  <div className="meeting-actions">
-                    <button onClick={() => setIsEditing(true)}>수정</button>
-                    <button onClick={() => deleteMeeting(selectedMeeting.id)}>삭제</button>
-                  </div>
+            </>
+          ) : (
+            <>
+              <div className="meeting-detail-header">
+                <h3 className="section-title">{selectedMeeting.title}</h3>
+                <div className="meeting-actions">
+                  <button className="btn-secondary" onClick={() => setIsEditing(true)}>
+                    <span className="btn-icon">✏️</span>
+                    수정
+                  </button>
+                  <button className="btn-delete" onClick={() => deleteMeeting(selectedMeeting.id)}>
+                    🗑️
+                  </button>
                 </div>
-                <div className="meeting-info">
-                  <p><strong>날짜:</strong> {selectedMeeting.date}</p>
-                  <div className="participants">
-                    <strong>참석자:</strong>
+              </div>
+              <div className="meeting-info">
+                <p><strong>📅 날짜:</strong> {new Date(selectedMeeting.date).toLocaleDateString()}</p>
+                <div className="participants">
+                  <strong>👥 참석자:</strong>
+                  <div className="tags-list">
                     {selectedMeeting.participants.map((p, idx) => (
                       <span key={idx} className="tag">{p}</span>
                     ))}
                   </div>
                 </div>
-                {selectedMeeting.agenda.length > 0 && (
-                  <div className="agenda-section">
-                    <h3>안건</h3>
-                    <ol>
-                      {selectedMeeting.agenda.map((item, idx) => (
-                        <li key={idx}>{item}</li>
-                      ))}
-                    </ol>
-                  </div>
-                )}
-                <div className="notes-section">
-                  <h3>회의 내용</h3>
-                  <p style={{ whiteSpace: 'pre-wrap' }}>{selectedMeeting.notes}</p>
+              </div>
+              {selectedMeeting.agenda.length > 0 && (
+                <div className="agenda-section">
+                  <h4>📋 안건</h4>
+                  <ol className="agenda-list">
+                    {selectedMeeting.agenda.map((item, idx) => (
+                      <li key={idx}>{item}</li>
+                    ))}
+                  </ol>
                 </div>
-                {selectedMeeting.actionItems.length > 0 && (
-                  <div className="action-items-section">
-                    <h3>액션 아이템</h3>
+              )}
+              <div className="notes-section">
+                <h4>📝 회의 내용</h4>
+                <div className="notes-content" style={{ whiteSpace: 'pre-wrap' }}>
+                  {selectedMeeting.notes}
+                </div>
+              </div>
+              {selectedMeeting.actionItems.length > 0 && (
+                <div className="action-items-section">
+                  <h4>✅ 액션 아이템</h4>
+                  <div className="action-items-grid">
                     {selectedMeeting.actionItems.map((item) => (
                       <div key={item.id} className={`action-item ${item.status}`}>
                         <input
@@ -387,22 +432,18 @@ const MeetingNotes: React.FC = () => {
                           checked={item.status === 'completed'}
                           onChange={() => toggleActionItemStatus(selectedMeeting.id, item.id)}
                         />
-                        <span>{item.task}</span>
-                        <span className="assignee">{item.assignee}</span>
-                        {item.dueDate && <span className="due-date">~{item.dueDate}</span>}
+                        <span className="action-task">{item.task}</span>
+                        <span className="action-assignee">{item.assignee}</span>
+                        {item.dueDate && <span className="action-due-date">📅 {new Date(item.dueDate).toLocaleDateString()}</span>}
                       </div>
                     ))}
                   </div>
-                )}
-              </>
-            )}
-          </div>
-        ) : (
-          <div className="empty-content">
-            <p>회의를 선택하거나 새 회의를 작성하세요.</p>
-          </div>
-        )}
-      </div>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 };
