@@ -158,9 +158,10 @@
 
 /* Hero Section */
 .hero-section {
-  background: var(--gradient-primary);
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   padding: 2rem 0;
   margin-bottom: 2rem;
+  border-bottom: 1px solid var(--medium-gray);
 }
 
 .hero-carousel {
@@ -189,17 +190,17 @@
 .hero-slide h2 {
   font-size: 1.75rem;
   font-weight: 700;
-  color: var(--primary-white);
+  color: var(--primary-black);
   margin-bottom: 1rem;
   line-height: 1.3;
   letter-spacing: -0.5px;
   white-space: pre-line;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-shadow: none;
 }
 
 .hero-slide p {
   font-size: 1rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-secondary);
   line-height: 1.5;
   max-width: 300px;
   margin: 0 auto;
