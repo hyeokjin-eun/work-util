@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
+import IntroModal from './IntroModal';
+import { useIntro } from '../hooks/useIntro';
 import '../styles/Auth.css';
 const logoImage = '/work_util_logo.png';
 
@@ -9,9 +11,18 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showIntroOnLogin, setShowIntroOnLogin] = useState(false);
 
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { showIntro, completeIntro } = useIntro();
+
+  useEffect(() => {
+    // Show intro only for first-time visitors to login page
+    if (showIntro) {
+      setShowIntroOnLogin(true);
+    }
+  }, [showIntro]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,9 +40,10 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="auth-app">
-      <div className="auth-main-content">
-        <div className="auth-card">
+    <>
+      <div className="auth-app">
+        <div className="auth-main-content">
+          <div className="auth-card">
           <div className="auth-logo">
             <img src={logoImage} alt="Work Util Logo" className="logo-image" />
           </div>
@@ -86,9 +98,21 @@ const Login: React.FC = () => {
               아직 계정이 없으신가요? <Link to="/register" className="auth-link">회원가입</Link>
             </p>
           </div>
+          </div>
         </div>
       </div>
-    </div>
+      
+      {/* Show intro modal only on first visit to login page */}
+      {showIntroOnLogin && (
+        <IntroModal 
+          isOpen={showIntroOnLogin} 
+          onClose={() => {
+            completeIntro();
+            setShowIntroOnLogin(false);
+          }} 
+        />
+      )}
+    </>
   );
 };
 

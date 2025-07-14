@@ -13,8 +13,6 @@ import JsonCompare from './pages/JsonCompare';
 import QrGenerator from './pages/QrGenerator';
 import WbsManager from './pages/WbsManager';
 import MyPage from './pages/MyPage';
-import IntroModal from './components/IntroModal';
-import { useIntro } from './hooks/useIntro';
 
 function App() {
   return (
@@ -29,7 +27,6 @@ function App() {
 function AppContent() {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
-  const { showIntro, completeIntro } = useIntro();
   const hideNavPaths = ['/login', '/register'];
   const showNav = isAuthenticated && !hideNavPaths.includes(location.pathname);
   const isAuthPage = hideNavPaths.includes(location.pathname);
@@ -92,11 +89,6 @@ function AppContent() {
         </Routes>
       </main>
       {showNav && <BottomNavigation />}
-      
-      {/* Show intro modal only when authenticated and on first visit */}
-      {isAuthenticated && showIntro && (
-        <IntroModal isOpen={showIntro} onClose={completeIntro} />
-      )}
     </div>
   );
 }
@@ -197,7 +189,6 @@ function BottomNavigation() {
 
 function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const { forceShowIntro } = useIntro();
   
   const heroSlides = [
     {
