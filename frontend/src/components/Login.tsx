@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
-import IntroModal from './IntroModal';
+import LogoIntro from './LogoIntro';
 import { useIntro } from '../hooks/useIntro';
 import '../styles/Auth.css';
 const logoImage = '/work_util_logo.png';
@@ -102,11 +102,10 @@ const Login: React.FC = () => {
         </div>
       </div>
       
-      {/* Show intro modal only on first visit to login page */}
+      {/* Show logo intro only on first visit to login page */}
       {showIntroOnLogin && (
-        <IntroModal 
-          isOpen={showIntroOnLogin} 
-          onClose={() => {
+        <LogoIntro 
+          onComplete={() => {
             completeIntro();
             setShowIntroOnLogin(false);
           }} 
