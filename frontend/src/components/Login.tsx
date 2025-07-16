@@ -1,118 +1,95 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from './AuthContext';
-import { useNavigate, Link } from 'react-router-dom';
-import LogoIntro from './LogoIntro';
-import { useIntro } from '../hooks/useIntro';
-import '../styles/Auth.css';
-const logoImage = '/work_util_logo.png';
+import React, { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from './AuthContext'
+import LogoIntro from './LogoIntro'
+import { useIntro } from '../hooks/useIntro'
+import '../styles/Auth.css'
 
 const Login: React.FC = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [showIntroOnLogin, setShowIntroOnLogin] = useState(false);
-
-  const { login } = useAuth();
-  const navigate = useNavigate();
-  const { showIntro, completeIntro } = useIntro();
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const { login, token } = useAuth()
+  const navigate = useNavigate()
+  const { hasSeenIntro, markIntroAsSeen } = useIntro()
 
   useEffect(() => {
-    // Show intro only for first-time visitors to login page
-    if (showIntro) {
-      setShowIntroOnLogin(true);
+    if (token) {
+      navigate('/home')
     }
-  }, [showIntro]);
+  }, [token, navigate])
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
+    e.preventDefault()
+    setError('')
 
     try {
-      await login({ username, password });
-      navigate('/');
-    } catch (error: any) {
-      setError(error.response?.data?.detail || '로그인에 실패했습니다.');
-    } finally {
-      setLoading(false);
+      await login(username, password)
+    } catch (err) {
+      setError('로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.')
     }
-  };
+  }
+
+  const handleIntroComplete = () => {
+    markIntroAsSeen()
+  }
+
+  if (!hasSeenIntro) {
+    return <LogoIntro onComplete={handleIntroComplete} />
+  }
 
   return (
-    <>
-      <div className="auth-app">
-        <div className="auth-main-content">
-          <div className="auth-card">
-          <div className="auth-logo">
-            <img src={logoImage} alt="Work Util Logo" className="logo-image" />
+    <div className="login-container">
+      <div className="login-card">
+        <div className="logo-section">
+          <div className="logo-icon-login animate-float">
+            <svg viewBox="0 0 24 24" style={{ width: '32px', height: '32px', stroke: 'white', fill: 'none', strokeWidth: 2 }}>
+              <path d="M9 12l2 2 4-4"/>
+              <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"/>
+              <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3"/>
+            </svg>
           </div>
-          <h2 className="auth-card-title">로그인</h2>
-          
-          <form onSubmit={handleSubmit} className="auth-form">
-            <div className="form-group">
-              <label htmlFor="username" className="form-label">
-                사용자명 또는 이메일
-              </label>
-              <input
-                type="text"
-                id="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-                disabled={loading}
-                className="form-input"
-                placeholder="이메일 주소를 입력하세요"
-              />
-            </div>
-            
-            <div className="form-group">
-              <label htmlFor="password" className="form-label">
-                비밀번호
-              </label>
-              <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                disabled={loading}
-                className="form-input"
-                placeholder="비밀번호를 입력하세요"
-              />
-            </div>
+          <div className="app-title-login animate-float-delayed">SmartWork</div>
+        </div>
 
-            {error && <div className="error-message">{error}</div>}
 
-            <button 
-              type="submit" 
-              className="btn-primary auth-submit"
-              disabled={loading}
-            >
-              {loading ? '로그인 중...' : '로그인'}
-            </button>
-          </form>
-
-          <div className="auth-footer">
-            <p className="auth-signup-text">
-              아직 계정이 없으신가요? <Link to="/register" className="auth-link">회원가입</Link>
-            </p>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label className="form-label">사용자명 또는 이메일</label>
+            <input
+              type="text"
+              className="form-input"
+              placeholder="이메일 주소를 입력하세요"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
           </div>
+
+          <div className="form-group">
+            <label className="form-label">비밀번호</label>
+            <input
+              type="password"
+              className="form-input"
+              placeholder="비밀번호를 입력하세요"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
           </div>
+
+          {error && <div className="error-message">{error}</div>}
+
+          <button type="submit" className="login-button">로그인</button>
+        </form>
+
+        <div className="signup-link">
+          <span className="signup-text">아직 계정이 없으신가요? </span>
+          <Link to="/register" className="signup-button">회원가입</Link>
         </div>
       </div>
-      
-      {/* Show logo intro only on first visit to login page */}
-      {showIntroOnLogin && (
-        <LogoIntro 
-          onComplete={() => {
-            completeIntro();
-            setShowIntroOnLogin(false);
-          }} 
-        />
-      )}
-    </>
-  );
-};
+    </div>
+  )
+}
 
-export default Login;
+export default Login

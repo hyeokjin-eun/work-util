@@ -31,6 +31,10 @@ class UserLogin(BaseModel):
     username: str
     password: str
 
+class PasswordChange(BaseModel):
+    currentPassword: str
+    newPassword: str
+
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
@@ -145,3 +149,30 @@ async def read_users_me(current_user: User = Depends(get_current_user)):
         "email": current_user.email,
         "created_at": current_user.created_at
     }
+
+@router.put("/change-password")
+async def change_password(
+    password_data: PasswordChange,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    # 현재 비밀번호 확인
+    if not verify_password(password_data.currentPassword, current_user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="현재 비밀번호가 올바르지 않습니다"
+        )
+    
+    # 새 비밀번호 길이 확인
+    if len(password_data.newPassword) < 6:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="비밀번호는 최소 6자 이상이어야 합니다"
+        )
+    
+    # 비밀번호 변경
+    hashed_new_password = get_password_hash(password_data.newPassword)
+    current_user.hashed_password = hashed_new_password
+    db.commit()
+    
+    return {"message": "비밀번호가 성공적으로 변경되었습니다"}

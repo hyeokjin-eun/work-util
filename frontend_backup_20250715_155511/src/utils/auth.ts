@@ -25,5 +25,10 @@ export const authAPI = {
   getDashboard: async () => {
     const response = await api.get('/protected/dashboard');
     return response.data;
+  },
+
+  changePassword: async (passwordData: { currentPassword: string; newPassword: string }) => {
+    const response = await api.put('/auth/change-password', passwordData);
+    return response.data;
   }
 };

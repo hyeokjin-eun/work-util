@@ -98,7 +98,7 @@ deploy_frontend() {
     
     # 빌드 파일 정리
     log_info "Cleaning previous builds..."
-    rm -rf build node_modules 2>/dev/null || true
+    rm -rf build dist node_modules 2>/dev/null || true
     
     # 의존성 설치
     log_info "Installing npm dependencies..."
@@ -112,7 +112,18 @@ deploy_frontend() {
     log_info "Deploying to web server..."
     sudo rm -rf "$WEB_ROOT" 2>/dev/null || true
     sudo mkdir -p "$WEB_ROOT"
-    sudo cp -r build/* "$WEB_ROOT/"
+    
+    # Check if Vite build (dist) or CRA build (build) exists
+    if [ -d "dist" ]; then
+        sudo cp -r dist/* "$WEB_ROOT/"
+        log_info "Deployed Vite build from dist/ directory"
+    elif [ -d "build" ]; then
+        sudo cp -r build/* "$WEB_ROOT/"
+        log_info "Deployed CRA build from build/ directory"
+    else
+        log_error "No build directory found (dist/ or build/)"
+        exit 1
+    fi
     
     # 권한 설정
     sudo chmod -R 755 "$WEB_ROOT"
@@ -321,7 +332,16 @@ quick_deploy() {
     cd "$FRONTEND_DIR"
     npm run build
     sudo rm -rf "$WEB_ROOT"/*
-    sudo cp -r build/* "$WEB_ROOT/"
+    
+    # Check build directory and copy
+    if [ -d "dist" ]; then
+        sudo cp -r dist/* "$WEB_ROOT/"
+    elif [ -d "build" ]; then
+        sudo cp -r build/* "$WEB_ROOT/"
+    else
+        log_error "No build directory found"
+        exit 1
+    fi
     sudo chmod -R 755 "$WEB_ROOT"
     
     # Nginx 리로드

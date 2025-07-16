@@ -28,6 +28,7 @@ export interface AuthContextType {
   login: (credentials: LoginRequest) => Promise<void>;
   register: (userData: RegisterRequest) => Promise<void>;
   logout: () => void;
+  changePassword: (passwordData: { currentPassword: string; newPassword: string }) => Promise<void>;
   isAuthenticated: boolean;
   loading: boolean;
 }
