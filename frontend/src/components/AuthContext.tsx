@@ -35,7 +35,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token')
+    const storedToken = localStorage.getItem('access_token')
     const storedUsername = localStorage.getItem('username')
     
     if (storedToken && storedUsername) {
@@ -48,15 +48,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (username: string, password: string) => {
     try {
-      // For now, we'll use mock authentication
-      // In production, this would call your backend API
-      const mockToken = 'mock-token-' + Date.now()
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.detail || '로그인에 실패했습니다.')
+      }
+
+      const data = await response.json()
       
-      localStorage.setItem('token', mockToken)
-      localStorage.setItem('username', username)
+      localStorage.setItem('access_token', data.access_token)
+      localStorage.setItem('username', data.user.username)
       
-      setToken(mockToken)
-      setUser({ username })
+      setToken(data.access_token)
+      setUser({ username: data.user.username, email: data.user.email })
       
       // Scroll to top after login
       window.scrollTo(0, 0)
@@ -69,7 +80,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }
 
   const logout = () => {
-    localStorage.removeItem('token')
+    localStorage.removeItem('access_token')
     localStorage.removeItem('username')
     setToken(null)
     setUser(null)

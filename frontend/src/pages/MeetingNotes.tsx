@@ -297,7 +297,7 @@ const MeetingNotes: React.FC = () => {
                 onChange={(e) => setSelectedTag(e.target.value)}
                 className="filter-select"
               >
-                <option value="all">전체</option>
+                <option value="all">🏷️ 전체 태그</option>
                 {getAllTags().map(tag => (
                   <option key={tag} value={tag}>{tag}</option>
                 ))}
@@ -311,9 +311,9 @@ const MeetingNotes: React.FC = () => {
                 onChange={(e) => setSortBy(e.target.value as SortType)}
                 className="filter-select"
               >
-                <option value="date">날짜순</option>
-                <option value="title">제목순</option>
-                <option value="priority">우선순위</option>
+                <option value="date">📅 최신 날짜 순</option>
+                <option value="title">📝 제목 가나다 순</option>
+                <option value="priority">🎯 우선순위 순</option>
               </select>
             </div>
           </div>
@@ -427,9 +427,9 @@ const MeetingNotes: React.FC = () => {
                       onChange={(e) => setNewMeeting({...newMeeting, priority: e.target.value as typeof newMeeting.priority})}
                       className="form-select"
                     >
-                      <option value="normal">일반</option>
-                      <option value="important">중요</option>
-                      <option value="urgent">긴급</option>
+                      <option value="normal">📝 일반 회의</option>
+                      <option value="important">⭐ 중요 회의</option>
+                      <option value="urgent">🚨 긴급 회의</option>
                     </select>
                   </div>
                 </div>

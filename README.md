@@ -5,9 +5,38 @@
 ## 📦 버전 관리 (Version Management)
 
 ### 🏷️ 현재 버전
-- **v1.1.0** (2025-01-16) - JSON 비교기 & QR 생성기 완성
+- **v1.1.2** (2025-07-16) - 할일 관리 시스템 UI/UX 대폭 개선 및 기능 확장
 
 ### 📋 버전 히스토리
+
+#### v1.1.2 (2025-07-16)
+- 🎨 **UI/UX 대폭 개선**: 전체적인 사용자 경험 향상
+- 🔧 **날짜 필드 매핑 수정**: 생성일자, 마감일자 정상 표시
+- 🏷️ **카테고리/태그 UI 개선**: 직관적인 시각적 표현
+- 📱 **DatePicker 동적 위치 조정**: 화면 공간에 따른 자동 위치 변경
+- 🔽 **카테고리 접기/펼치기 기능**: 새 할일 추가 페이지 UI 최적화
+- ⚡ **빠른 추가 API 연결**: 실제 데이터베이스 저장 기능 완성
+- 🎯 **우선순위 UI 통일**: 빠른 추가와 새 할일 추가 인터페이스 일관성
+- 🖱️ **버튼 크기 안정화**: 로딩 상태 변경 시 크기 변화 방지
+- 🌈 **고정 헤더 애니메이션**: 배경 애니메이션 범위 확대 및 최적화
+- 🎭 **z-index 계층 관리**: 드롭다운 메뉴 표시 순서 개선
+
+**주요 개선사항:**
+- 할일 등록 시 생성일자/마감일자 정상 표시
+- 카테고리별 색상 코딩 및 태그 시각화
+- 화면 크기에 따른 달력 위치 자동 조정
+- 빠른 추가 기능 완전 동작
+- 일관된 UI/UX 경험 제공
+
+#### v1.1.1 (2025-07-16)
+- ✅ **할일 관리 시스템 완성**: SQLite 데이터베이스와 완전 통합
+- 🔐 **JWT 인증 시스템 통합**: AuthContext와 백엔드 API 완전 연동
+- 🗃️ **사용자별 데이터 분리**: 각 사용자의 할일이 개별적으로 관리
+- 🚀 **할일 CRUD 기능**: 생성, 조회, 수정, 삭제 완전 구현
+- 🎨 **맞춤형 UI 컴포넌트**: 우선순위 선택, 달력, 상태 관리 UI
+- 🔧 **API 엔드포인트**: RESTful API 설계 및 구현
+- 📱 **반응형 디자인**: 모바일 최적화된 할일 관리 인터페이스
+- 🌐 **프로덕션 배포**: next-exit.me 도메인에 안정적 배포
 
 #### v1.1.0 (2025-01-16)
 - ✅ **JSON 비교기 완성**: 실시간 JSON 데이터 비교 및 차이점 시각화
@@ -79,11 +108,17 @@ feature/dark-mode     # 다크 모드
 
 ## 🚀 주요 기능
 
-### 1. 할일 관리 (Todo Management)
-- ✅ 우선순위별 작업 관리 (A/B/C 등급)
-- 📅 마감일 설정 및 추적
-- 🔄 상태별 필터링 (대기중/진행중/완료)
-- 📊 진행률 시각화
+### 1. 할일 관리 (Todo Management) ⭐ **NEW**
+- ✅ **완전한 CRUD 기능**: 생성, 조회, 수정, 삭제 완전 구현
+- 🔐 **사용자별 데이터 분리**: JWT 인증을 통한 개인 할일 관리
+- 🎯 **우선순위 관리**: 높음/보통/낮음 3단계 우선순위 설정
+- 📅 **마감일 관리**: 달력 UI를 통한 직관적인 마감일 설정
+- 🔄 **상태 관리**: 대기중/진행중/완료 상태 추적
+- 📂 **카테고리 분류**: 업무 카테고리별 할일 분류
+- 🏷️ **태그 시스템**: 태그를 통한 할일 분류 및 검색
+- 📊 **통계 및 분석**: 완료율, 우선순위별 통계 제공
+- 🎨 **맞춤형 UI**: 우선순위별 색상 코딩, 반응형 디자인
+- 🔍 **필터링 및 정렬**: 상태별, 우선순위별, 마감일별 정렬
 
 ### 2. 회의록 메모 (Meeting Notes)
 - 📝 구조화된 회의록 작성
@@ -235,14 +270,351 @@ backend/
 
 ## 🔐 API 엔드포인트
 
-### 인증
+### 인증 (Authentication)
 - `POST /api/auth/register` - 회원가입
 - `POST /api/auth/login` - 로그인  
 - `GET /api/auth/me` - 현재 사용자 정보
+- `PUT /api/auth/change-password` - 비밀번호 변경
+
+### 할일 관리 (Todo Management) ⭐ **NEW**
+> **모든 할일 API는 JWT 토큰이 필요합니다**
+
+- `GET /api/todos` - 할일 목록 조회
+  - Query Parameters: `status_filter`, `limit`, `offset`
+- `POST /api/todos` - 새 할일 생성
+- `GET /api/todos/{todo_id}` - 특정 할일 조회
+- `PUT /api/todos/{todo_id}` - 할일 수정
+- `DELETE /api/todos/{todo_id}` - 할일 삭제
+- `GET /api/todos/stats` - 할일 통계 조회
 
 ### 보호된 라우트 (JWT 토큰 필요)
 - `GET /api/protected/profile` - 사용자 프로필
 - `GET /api/protected/dashboard` - 대시보드
+- `GET /api/health` - 시스템 상태 확인
+
+## 🗃️ 데이터베이스 스키마
+
+### 사용자 테이블 (users)
+```sql
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE NOT NULL,
+    email TEXT,
+    hashed_password TEXT NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+### 할일 테이블 (todos) ⭐ **NEW**
+```sql
+CREATE TABLE todos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT,
+    priority TEXT NOT NULL DEFAULT 'medium',  -- 'high', 'medium', 'low'
+    status TEXT NOT NULL DEFAULT 'pending',   -- 'pending', 'in_progress', 'completed'
+    category TEXT DEFAULT '',
+    due_date DATE,
+    tags TEXT DEFAULT '',                      -- 콤마로 구분된 태그 목록
+    completed BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
+```
+
+### 데이터베이스 인덱스
+```sql
+CREATE INDEX idx_todos_user_id ON todos(user_id);
+CREATE INDEX idx_todos_status ON todos(status);
+CREATE INDEX idx_todos_due_date ON todos(due_date);
+```
+
+## 🧪 테스트 계정 및 사용법
+
+### 📝 테스트 계정 정보
+> **프로덕션 환경에서 테스트할 수 있는 계정입니다**
+
+| 계정 | 사용자명 | 비밀번호 | 용도 |
+|------|----------|----------|------|
+| 테스트 계정 | `testuser` | `password123` | 일반 기능 테스트 |
+| 관리자 계정 | `admin` | `admin123` | 관리 기능 테스트 |
+
+### 🔗 접속 및 테스트 가이드
+
+#### 1. 웹사이트 접속
+```
+URL: https://next-exit.me
+```
+
+#### 2. 로그인 과정
+1. 메인 페이지에서 로그인 버튼 클릭
+2. 테스트 계정으로 로그인: `testuser` / `password123`
+3. 홈 페이지로 자동 리다이렉트
+
+#### 3. 할일 관리 기능 테스트
+1. **홈 페이지에서 "할일 관리" 클릭**
+2. **새 할일 추가 테스트**:
+   - "✨ 새 할일 추가" 버튼 클릭
+   - 제목, 설명, 우선순위, 마감일 설정
+   - 저장 후 목록에서 확인
+3. **할일 상태 변경 테스트**:
+   - 할일 항목의 상태 드롭다운 변경
+   - 대기중 → 진행중 → 완료 상태 변경
+4. **필터링 및 정렬 테스트**:
+   - 상태별 필터링 (전체/대기중/진행중/완료)
+   - 정렬 옵션 변경 (우선순위/마감일/생성일/가나다순)
+
+#### 4. API 테스트 (개발자용)
+```bash
+# 로그인 후 토큰 획득
+curl -X POST https://next-exit.me/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"username": "testuser", "password": "password123"}'
+
+# 할일 목록 조회
+curl -X GET https://next-exit.me/api/todos \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE"
+
+# 새 할일 생성
+curl -X POST https://next-exit.me/api/todos \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -d '{"title": "테스트 할일", "description": "API 테스트", "priority": "high"}'
+```
+
+### 🔍 기능 검증 체크리스트
+
+#### 인증 시스템
+- [ ] 회원가입 기능 동작
+- [ ] 로그인/로그아웃 기능 동작
+- [ ] JWT 토큰 기반 인증 동작
+- [ ] 비인증 사용자 리다이렉트 동작
+
+#### 할일 관리 시스템
+- [ ] 할일 생성 기능 동작
+- [ ] 할일 목록 조회 기능 동작
+- [ ] 할일 수정 기능 동작
+- [ ] 할일 삭제 기능 동작
+- [ ] 상태 변경 기능 동작
+- [ ] 필터링 기능 동작
+- [ ] 정렬 기능 동작
+- [ ] 우선순위 설정 기능 동작
+- [ ] 마감일 설정 기능 동작
+- [ ] 사용자별 데이터 분리 동작
+
+#### UI/UX 확인
+- [ ] 반응형 디자인 동작
+- [ ] 우선순위별 색상 코딩 동작
+- [ ] 로딩 상태 표시 동작
+- [ ] 에러 처리 동작
+- [ ] 마감일 표시 및 알림 동작
+
+## 🔧 v1.1.2 상세 구현 내역
+
+### 📋 주요 작업 내역 (2025-07-16)
+
+#### 1. 할일 관리 시스템 UI/UX 대폭 개선
+- **날짜 필드 매핑 수정**: 
+  - API 응답 데이터 (`created_at`, `due_date`)를 프론트엔드 형식 (`createdAt`, `dueDate`)으로 변환
+  - 할일 등록 시 생성일자, 마감일자 정상 표시
+- **카테고리/태그 UI 개선**:
+  - 카테고리별 색상 코딩 및 아이콘 적용 (업무💼, 개인👤, 학습📚, 건강🏃, 금융💰, 기타📝)
+  - 태그 배지 스타일링 및 여러 태그 표시
+  - 태그 유무에 따른 레이아웃 일관성 유지
+- **DatePicker 동적 위치 조정**:
+  - 화면 공간에 따른 자동 위치 계산 (`calculateDropdownPosition`)
+  - 위/아래 동적 표시 및 애니메이션 개선
+  - 창 크기 변경 및 스크롤 시 실시간 위치 재계산
+
+#### 2. 새 할일 추가 페이지 최적화
+- **카테고리 접기/펼치기 기능**:
+  - 기본 접힌 상태로 UI 간소화
+  - 선택된 카테고리 표시 및 자동 닫기
+  - 슬라이드 애니메이션 효과
+- **로딩 UI 개선**:
+  - 버튼 크기 고정 (`height: 56px`)
+  - 로딩 스피너 제거하여 안정적인 UI 제공
+  - 텍스트 기반 로딩 상태 표시
+
+#### 3. 빠른 추가 기능 완전 구현
+- **API 연결 수정**:
+  - 로컬 상태 업데이트에서 실제 API 호출로 변경
+  - `/api/todos` POST 요청으로 데이터베이스 저장
+  - 등록 후 할일 목록 자동 새로고침
+- **우선순위 UI 통일**:
+  - 새 할일 추가 페이지와 동일한 라디오 버튼 UI
+  - DatePicker 컴포넌트 적용
+  - 일관된 사용자 경험 제공
+- **로딩 상태 관리**:
+  - `isSubmitting` 상태로 버튼 비활성화
+  - 안정적인 로딩 UI 제공
+
+#### 4. 고정 헤더 애니메이션 최적화
+- **배경 애니메이션 범위 확대**:
+  - 애니메이션 크기를 900% x 900%로 확대
+  - 더 역동적인 배경 효과 제공
+  - 글자 크기 app-title 기준 통일 (28px)
+- **z-index 계층 관리**:
+  - 드롭다운 메뉴 표시 순서 개선
+  - 모달 내 달력 z-index 최적화
+  - 고정 헤더 위로 나오는 달력 처리
+
+#### 5. 전체적인 안정성 개선
+- **버튼 크기 안정화**:
+  - 로딩 상태 변경 시 크기 변화 방지
+  - 고정 높이 및 flexbox 레이아웃 적용
+- **에러 처리 강화**:
+  - 네트워크 오류 및 인증 실패 처리
+  - 사용자 친화적인 에러 메시지
+- **성능 최적화**:
+  - 불필요한 리렌더링 방지
+  - 메모리 효율적인 이벤트 핸들러
+
+## 🔧 v1.1.1 상세 구현 내역
+
+### 📋 주요 작업 내역 (2025-07-16)
+
+#### 1. 백엔드 시스템 구현
+- **SQLite 데이터베이스 통합**: 기존 SQLAlchemy 사용자 시스템과 연동
+- **할일 관리 API 구현**: RESTful API 설계 및 구현
+  - `database.py`: SQLite 기반 할일 CRUD 클래스 구현
+  - `todo_routes.py`: FastAPI 라우터 및 엔드포인트 구현
+  - `main.py`: 할일 API 라우터 등록 및 서버 설정
+- **JWT 인증 통합**: 기존 인증 시스템과 할일 API 연동
+- **데이터 검증**: Pydantic 모델을 통한 입력 데이터 검증
+- **에러 처리**: 적절한 HTTP 상태 코드와 에러 메시지 반환
+
+#### 2. 프론트엔드 시스템 구현
+- **AuthContext 개선**: Mock 인증에서 실제 JWT 인증으로 전환
+- **할일 관리 컴포넌트**: 
+  - `TodoList.tsx`: 할일 목록 조회 및 관리 컴포넌트
+  - `AddTodo.tsx`: 새 할일 추가 전용 페이지
+  - `CustomSelect.tsx`: 맞춤형 드롭다운 컴포넌트
+  - `DatePicker.tsx`: 커스텀 달력 컴포넌트
+- **UI/UX 개선**: 
+  - 우선순위별 색상 코딩
+  - 반응형 디자인
+  - 로딩 상태 및 에러 처리
+  - 마감일 표시 및 상태 알림
+
+#### 3. 인증 시스템 통합
+- **토큰 관리 통합**: localStorage의 `access_token` 사용 통일
+- **AuthContext 실제 API 연동**: `/api/auth/login` 엔드포인트 호출
+- **인증 상태 관리**: `isLoading` 상태를 통한 적절한 타이밍 관리
+- **자동 리다이렉트 해결**: 토큰 없을 시 로그인 페이지로 자동 이동
+
+#### 4. 데이터베이스 설계
+```sql
+-- 사용자별 할일 데이터 분리
+user_id INTEGER NOT NULL,
+FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+
+-- 성능 최적화를 위한 인덱스 설계
+CREATE INDEX idx_todos_user_id ON todos(user_id);
+CREATE INDEX idx_todos_status ON todos(status);
+CREATE INDEX idx_todos_due_date ON todos(due_date);
+```
+
+#### 5. API 설계 원칙
+- **RESTful 설계**: 표준 HTTP 메서드 사용
+- **JWT 보안**: 모든 할일 API에 JWT 토큰 필수
+- **사용자 데이터 분리**: 토큰의 사용자 정보로 데이터 접근 제한
+- **입력 검증**: Pydantic 모델을 통한 데이터 유효성 검사
+- **에러 처리**: 일관된 에러 응답 형식
+
+### 🛠️ 기술적 구현 세부사항
+
+#### 백엔드 아키텍처
+```python
+# database.py - SQLite 할일 관리 클래스
+class Database:
+    def create_todo(self, user_id: int, todo_data: Dict[str, Any]) -> int
+    def get_todos(self, user_id: int, status: Optional[str] = None) -> List[Dict[str, Any]]
+    def update_todo(self, user_id: int, todo_id: int, update_data: Dict[str, Any]) -> bool
+    def delete_todo(self, user_id: int, todo_id: int) -> bool
+    def get_todo_stats(self, user_id: int) -> Dict[str, Any]
+
+# todo_routes.py - FastAPI 라우터 구현
+@router.post("/todos", response_model=dict)
+@router.get("/todos", response_model=List[TodoResponse])
+@router.get("/todos/{todo_id}", response_model=TodoResponse)
+@router.put("/todos/{todo_id}", response_model=dict)
+@router.delete("/todos/{todo_id}", response_model=dict)
+@router.get("/todos/stats", response_model=TodoStats)
+```
+
+#### 프론트엔드 아키텍처
+```typescript
+// AuthContext.tsx - 실제 JWT 인증 구현
+const login = async (username: string, password: string) => {
+  const response = await fetch('/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password }),
+  })
+  const data = await response.json()
+  localStorage.setItem('access_token', data.access_token)
+  setToken(data.access_token)
+  setUser(data.user)
+}
+
+// TodoList.tsx - 할일 목록 관리 컴포넌트
+const { token, user, isLoading } = useAuth()
+const loadTodos = async () => {
+  const response = await fetch('/api/todos', {
+    headers: { 'Authorization': `Bearer ${token}` }
+  })
+  const todosData = await response.json()
+  setTodos(todosData)
+}
+```
+
+#### 데이터 플로우
+1. **사용자 로그인** → JWT 토큰 생성 → localStorage 저장
+2. **할일 API 호출** → Authorization 헤더에 토큰 첨부
+3. **백엔드 인증** → JWT 토큰 검증 → 사용자 ID 추출
+4. **데이터베이스 쿼리** → 사용자 ID로 할일 필터링
+5. **응답 반환** → 해당 사용자의 할일만 반환
+
+### 🐛 해결된 주요 문제들
+
+#### 1. 자동 리다이렉트 문제
+- **문제**: 할일 관리 페이지 접근 시 즉시 로그인 페이지로 리다이렉트
+- **원인**: AuthContext의 mock 인증과 실제 API 인증 불일치
+- **해결**: AuthContext를 실제 JWT 인증으로 전환, 토큰 키 통일
+
+#### 2. 토큰 관리 불일치
+- **문제**: AuthContext는 `token`, TodoList는 `access_token` 사용
+- **원인**: 개발 과정에서 토큰 키 네이밍 불일치
+- **해결**: 모든 컴포넌트에서 `access_token` 사용으로 통일
+
+#### 3. 인증 타이밍 문제
+- **문제**: AuthContext 로딩 중에 API 호출로 인한 인증 실패
+- **원인**: `isLoading` 상태 확인 없이 즉시 API 호출
+- **해결**: `isLoading` 완료 후 API 호출하도록 useEffect 수정
+
+#### 4. 사용자 데이터 분리
+- **문제**: 모든 사용자의 할일이 섞여서 조회됨
+- **원인**: JWT 토큰의 사용자 정보 활용 미흡
+- **해결**: 모든 할일 API에서 `current_user.id`로 데이터 필터링
+
+### 💡 성능 최적화 및 보안
+
+#### 성능 최적화
+- **데이터베이스 인덱스**: 자주 조회되는 컬럼에 인덱스 생성
+- **API 페이지네이션**: `limit`, `offset` 파라미터 지원
+- **프론트엔드 최적화**: 로딩 상태 관리, 에러 바운더리
+- **정적 자원 캐싱**: Nginx를 통한 CSS/JS 파일 캐싱
+
+#### 보안 강화
+- **JWT 토큰 인증**: 모든 할일 API에 토큰 필수
+- **사용자 데이터 분리**: 타 사용자 데이터 접근 불가
+- **입력 데이터 검증**: Pydantic을 통한 서버 사이드 검증
+- **SQL 인젝션 방지**: SQLAlchemy ORM 사용
 
 ## 🚀 **자동 배포 스크립트**
 

@@ -7,6 +7,7 @@ import Register from './components/Register'
 import Home from './pages/Home'
 import Dashboard from './pages/Dashboard'
 import TodoList from './pages/TodoList'
+import AddTodo from './pages/AddTodo'
 import Calendar from './pages/Calendar'
 import MeetingNotes from './pages/MeetingNotes'
 import Utilities from './pages/Utilities'
@@ -61,6 +62,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <TodoList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/todo/add"
+            element={
+              <ProtectedRoute>
+                <AddTodo />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/add-todo"
+            element={
+              <ProtectedRoute>
+                <AddTodo />
               </ProtectedRoute>
             }
           />

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Layout from '../components/Layout'
+import CustomSelect from '../components/CustomSelect'
 
 interface QRSettings {
   errorLevel: 'L' | 'M' | 'Q' | 'H'
@@ -22,6 +23,78 @@ const QrGenerator: React.FC = () => {
     fileFormat: 'PNG'
   })
   const canvasRef = useRef<HTMLCanvasElement>(null)
+
+  const errorLevelOptions = [
+    { 
+      value: 'L', 
+      label: '낮음', 
+      icon: '🟢',
+      description: '~7% 복구 가능',
+      color: '#10b981'
+    },
+    { 
+      value: 'M', 
+      label: '중간', 
+      icon: '🟡',
+      description: '~15% 복구 가능',
+      color: '#f59e0b'
+    },
+    { 
+      value: 'Q', 
+      label: '높음', 
+      icon: '🟠',
+      description: '~25% 복구 가능',
+      color: '#f97316'
+    },
+    { 
+      value: 'H', 
+      label: '최고', 
+      icon: '🔴',
+      description: '~30% 복구 가능',
+      color: '#ef4444'
+    }
+  ]
+
+  const sizeOptions = [
+    { 
+      value: 128, 
+      label: '작게', 
+      icon: '📱',
+      description: '128px (모바일용)',
+      color: '#6b7280'
+    },
+    { 
+      value: 256, 
+      label: '보통', 
+      icon: '🖥️',
+      description: '256px (일반용)',
+      color: '#3b82f6'
+    },
+    { 
+      value: 512, 
+      label: '크게', 
+      icon: '🖼️',
+      description: '512px (고화질)',
+      color: '#8b5cf6'
+    }
+  ]
+
+  const formatOptions = [
+    { 
+      value: 'PNG', 
+      label: 'PNG', 
+      icon: '🖼️',
+      description: '투명 배경 지원',
+      color: '#3b82f6'
+    },
+    { 
+      value: 'JPEG', 
+      label: 'JPEG', 
+      icon: '📸',
+      description: '흰색 배경',
+      color: '#f59e0b'
+    }
+  ]
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -153,29 +226,22 @@ const QrGenerator: React.FC = () => {
           
           <div className="form-group">
             <label className="form-label">오류 정정 수준</label>
-            <select 
-              className="form-select" 
+            <CustomSelect
+              options={errorLevelOptions}
               value={settings.errorLevel}
-              onChange={(e) => setSettings({...settings, errorLevel: e.target.value as 'L' | 'M' | 'Q' | 'H'})}
-            >
-              <option value="L">낮음 (~7%)</option>
-              <option value="M">중간 (~15%)</option>
-              <option value="Q">높음 (~25%)</option>
-              <option value="H">최고 (~30%)</option>
-            </select>
+              onChange={(value) => setSettings({...settings, errorLevel: value as 'L' | 'M' | 'Q' | 'H'})}
+              placeholder="오류 정정 수준을 선택하세요"
+            />
           </div>
 
           <div className="form-group">
             <label className="form-label">크기</label>
-            <select 
-              className="form-select" 
+            <CustomSelect
+              options={sizeOptions}
               value={settings.size}
-              onChange={(e) => setSettings({...settings, size: Number(e.target.value)})}
-            >
-              <option value={128}>128px</option>
-              <option value={256}>256px</option>
-              <option value={512}>512px</option>
-            </select>
+              onChange={(value) => setSettings({...settings, size: Number(value)})}
+              placeholder="크기를 선택하세요"
+            />
           </div>
 
           <div className="form-group">
@@ -216,14 +282,12 @@ const QrGenerator: React.FC = () => {
 
           <div className="form-group">
             <label className="form-label">파일 형식</label>
-            <select 
-              className="form-select" 
+            <CustomSelect
+              options={formatOptions}
               value={settings.fileFormat}
-              onChange={(e) => setSettings({...settings, fileFormat: e.target.value as 'PNG' | 'JPEG'})}
-            >
-              <option value="PNG">PNG</option>
-              <option value="JPEG">JPEG</option>
-            </select>
+              onChange={(value) => setSettings({...settings, fileFormat: value as 'PNG' | 'JPEG'})}
+              placeholder="파일 형식을 선택하세요"
+            />
           </div>
         </div>
 

@@ -107,9 +107,9 @@ const JsonFormatter: React.FC = () => {
               value={indentSize} 
               onChange={(e) => setIndentSize(e.target.value)}
             >
-              <option value="2">2 spaces</option>
-              <option value="4">4 spaces</option>
-              <option value="tab">Tab</option>
+              <option value="2">📐 2칸 간격 (컴팩트)</option>
+              <option value="4">📏 4칸 간격 (표준)</option>
+              <option value="tab">📑 탭 간격 (넓게)</option>
             </select>
           </div>
 

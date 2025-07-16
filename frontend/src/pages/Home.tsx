@@ -29,7 +29,7 @@ const Home: React.FC = () => {
         <div className="section-title">주요 기능</div>
         
         <div className="feature-grid">
-          <Link to="/todolist" className="feature-card">
+          <Link to="/todo" className="feature-card">
             <div className="feature-header">
               <div className="feature-icon task">✓</div>
               <div>

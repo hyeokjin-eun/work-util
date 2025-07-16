@@ -6,22 +6,36 @@
   padding: 0;
 }
 
-/* Add Task Button */
+/* Add Task Buttons */
+.add-task-buttons {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
 .add-task-btn {
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-  color: white;
   border: none;
   padding: 18px 24px;
   border-radius: 16px;
   font-size: 16px;
   font-weight: 600;
-  width: 100%;
-  margin-bottom: 30px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
   position: relative;
   overflow: hidden;
+  flex: 1;
+}
+
+.add-task-btn.primary {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+}
+
+.add-task-btn.secondary {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
 }
 
 .add-task-btn::before {
@@ -39,9 +53,14 @@
   left: 100%;
 }
 
-.add-task-btn:hover {
+.add-task-btn.primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 25px rgba(59, 130, 246, 0.4);
+}
+
+.add-task-btn.secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(16, 185, 129, 0.4);
 }
 
 .add-task-btn:active {
@@ -123,6 +142,8 @@
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
   border: 1px solid rgba(59, 130, 246, 0.1);
   margin-bottom: 100px;
+  position: relative;
+  z-index: 1;
 }
 
 .tasks-header {
@@ -198,7 +219,7 @@
   gap: 16px;
   transition: all 0.3s ease;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .todo-item:hover {
@@ -280,6 +301,52 @@
   min-width: 0;
 }
 
+/* Category and Tags */
+.todo-category-tags {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.category-container {
+  display: flex;
+  align-items: center;
+}
+
+.category-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+  width: fit-content;
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.tag-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 6px;
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
 .todo-header {
   display: flex;
   align-items: flex-start;
@@ -355,23 +422,82 @@
   flex-direction: column;
   gap: 8px;
   align-items: flex-end;
+  position: relative;
+  z-index: 10;
+}
+
+/* Status Custom Select */
+.status-custom-select {
+  min-width: 100px;
+  position: relative;
+  z-index: 100;
+}
+
+.status-custom-select .custom-select-trigger {
+  padding: 8px 12px;
+  font-size: 12px;
+  border-radius: 12px;
+}
+
+.status-custom-select .option-icon {
+  font-size: 14px;
+}
+
+.status-custom-select .option-label {
+  font-size: 12px;
+}
+
+/* Status Custom Select Dropdown - Higher z-index */
+.status-custom-select .custom-select-dropdown {
+  z-index: 10001;
+  border-radius: 12px;
+  margin-top: 2px;
+}
+
+.status-custom-select .custom-select-option {
+  padding: 8px 12px;
 }
 
 .status-select {
-  padding: 6px 8px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  padding: 8px 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
   font-size: 12px;
-  background: white;
+  background: #f8fafc;
+  color: #2d3748;
   cursor: pointer;
   transition: all 0.3s ease;
-  min-width: 80px;
+  min-width: 90px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 8px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: 32px;
+  box-sizing: border-box;
+  font-family: inherit;
 }
 
 .status-select:focus {
   outline: none;
   border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.status-select:hover {
+  background: white;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%233b82f6' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 8px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: 32px;
+}
+
+.status-select:focus {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%233b82f6' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
 }
 
 .delete-btn {
@@ -386,6 +512,72 @@
 
 .delete-btn:hover {
   background: #fee2e2;
+}
+
+/* Priority Options (같은 스타일을 TodoList 모달에도 적용) */
+.priority-options {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.priority-option {
+  flex: 1;
+  cursor: pointer;
+}
+
+.priority-option input[type="radio"] {
+  display: none;
+}
+
+.priority-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 8px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  background: white;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.priority-option input[type="radio"]:checked + .priority-card {
+  border-color: var(--priority-color);
+  background: rgba(var(--priority-color-rgb, 59, 130, 246), 0.1);
+}
+
+.priority-card:hover {
+  border-color: var(--priority-color);
+  background: rgba(var(--priority-color-rgb, 59, 130, 246), 0.05);
+}
+
+.priority-icon {
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+
+.priority-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.priority-option input[type="radio"]:checked + .priority-card .priority-label {
+  color: var(--priority-color);
+}
+
+/* Modal 내 DatePicker 스타일 - 위로 나오도록 (기본값 유지) */
+.modal-content .date-picker .date-picker-dropdown {
+  z-index: 1001;
+}
+
+.modal-content .date-picker .date-picker-dropdown.top {
+  z-index: 1001;
+}
+
+.modal-content .date-picker .date-picker-dropdown.bottom {
+  z-index: 1001;
 }
 
 /* Modal Styles */
@@ -525,6 +717,10 @@
   cursor: pointer;
   transition: all 0.3s ease;
   border: none;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cancel-btn {
@@ -552,8 +748,39 @@
   cursor: not-allowed;
 }
 
+/* Loading UI for modal */
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.loading-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
+  .add-task-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .add-task-btn {
+    width: 100%;
+  }
+  
   .todo-item {
     padding: 16px;
     flex-direction: column;
