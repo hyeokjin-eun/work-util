@@ -11,6 +11,7 @@ interface AuthContextType {
   token: string | null
   login: (username: string, password: string) => Promise<void>
   logout: () => void
+  refreshToken: () => Promise<boolean>
   isLoading: boolean
 }
 
@@ -37,6 +38,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const storedToken = localStorage.getItem('access_token')
     const storedUsername = localStorage.getItem('username')
+    const storedRefreshToken = localStorage.getItem('refresh_token')
     
     if (storedToken && storedUsername) {
       setToken(storedToken)
@@ -64,6 +66,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const data = await response.json()
       
       localStorage.setItem('access_token', data.access_token)
+      localStorage.setItem('refresh_token', data.refresh_token)
       localStorage.setItem('username', data.user.username)
       
       setToken(data.access_token)
@@ -81,14 +84,51 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('access_token')
+    localStorage.removeItem('refresh_token')
     localStorage.removeItem('username')
     setToken(null)
     setUser(null)
     navigate('/login')
   }
 
+  const refreshToken = async (): Promise<boolean> => {
+    try {
+      const storedRefreshToken = localStorage.getItem('refresh_token')
+      
+      if (!storedRefreshToken) {
+        return false
+      }
+
+      const response = await fetch('/api/auth/refresh', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ refresh_token: storedRefreshToken }),
+      })
+
+      if (!response.ok) {
+        return false
+      }
+
+      const data = await response.json()
+      
+      localStorage.setItem('access_token', data.access_token)
+      localStorage.setItem('refresh_token', data.refresh_token)
+      localStorage.setItem('username', data.user.username)
+      
+      setToken(data.access_token)
+      setUser({ username: data.user.username, email: data.user.email })
+      
+      return true
+    } catch (error) {
+      console.error('Token refresh failed:', error)
+      return false
+    }
+  }
+
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, token, login, logout, refreshToken, isLoading }}>
       {children}
     </AuthContext.Provider>
   )

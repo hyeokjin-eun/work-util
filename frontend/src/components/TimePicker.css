@@ -1,0 +1,318 @@
+/* TimePicker Styles - Similar to DatePicker */
+
+.time-picker {
+  position: relative;
+  width: 100%;
+}
+
+.time-picker-input {
+  position: relative;
+  width: 100%;
+  cursor: pointer;
+}
+
+.time-input-field {
+  width: 100%;
+  padding: 16px 50px 16px 20px;
+  border: 2px solid #e2e8f0;
+  border-radius: 20px;
+  font-size: 16px;
+  font-family: inherit;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  color: #2d3748;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  font-weight: 500;
+}
+
+.time-input-field:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15), 0 8px 24px rgba(59, 130, 246, 0.2);
+  transform: translateY(-2px);
+}
+
+.time-input-field::placeholder {
+  color: #9ca3af;
+  font-weight: 400;
+}
+
+.time-input-field.error {
+  border-color: #ef4444;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);
+}
+
+.time-picker-icon {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  pointer-events: none;
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+
+.time-picker-input:hover .time-picker-icon {
+  transform: translateY(-50%) scale(1.1);
+}
+
+.time-picker-dropdown {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  padding: 24px;
+  animation: timeDropdownSlideIn 0.3s ease-out;
+}
+
+.time-picker-dropdown.bottom {
+  top: calc(100% + 8px);
+}
+
+.time-picker-dropdown.top {
+  bottom: calc(100% + 8px);
+}
+
+@keyframes timeDropdownSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.time-picker-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.time-picker-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2d3748;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.time-picker-content {
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+  min-height: 200px;
+}
+
+.time-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.time-column-header {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 12px;
+  padding: 8px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border-radius: 12px;
+}
+
+.time-list {
+  flex: 1;
+  max-height: 160px;
+  overflow-y: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 8px;
+  background: #f8fafc;
+}
+
+.time-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.time-list::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+
+.time-list::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
+  border-radius: 10px;
+}
+
+.time-list::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+}
+
+.time-item {
+  padding: 8px 12px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  transition: all 0.2s ease;
+  margin-bottom: 4px;
+}
+
+.time-item:hover {
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+  color: #3730a3;
+  transform: translateY(-1px);
+}
+
+.time-item.selected {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.time-item.selected:hover {
+  background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+  transform: translateY(-1px);
+}
+
+.time-separator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 700;
+  color: #6b7280;
+  margin: 0 8px;
+}
+
+.time-picker-shortcuts {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.time-shortcut-btn {
+  padding: 8px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  color: #374151;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.time-shortcut-btn:hover {
+  border-color: #3b82f6;
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  color: #1d4ed8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+.time-shortcut-btn:active {
+  transform: translateY(0);
+}
+
+/* 애니메이션 */
+@keyframes timeItemPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.time-item.selected {
+  animation: timeItemPulse 0.3s ease-out;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .time-picker-dropdown {
+    padding: 20px;
+  }
+  
+  .time-picker-content {
+    gap: 12px;
+  }
+  
+  .time-picker-shortcuts {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .time-shortcut-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .time-picker-dropdown {
+    padding: 16px;
+  }
+  
+  .time-picker-content {
+    min-height: 180px;
+  }
+  
+  .time-list {
+    max-height: 140px;
+  }
+}
+
+/* 접근성 */
+.time-item:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.time-shortcut-btn:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* 고대비 모드 지원 */
+@media (prefers-contrast: high) {
+  .time-item.selected {
+    border: 2px solid #000000;
+  }
+}
+
+/* 애니메이션 감소 모드 지원 */
+@media (prefers-reduced-motion: reduce) {
+  .time-picker-dropdown {
+    animation: none;
+  }
+  
+  .time-item {
+    transition: none;
+  }
+  
+  .time-shortcut-btn {
+    transition: none;
+  }
+}

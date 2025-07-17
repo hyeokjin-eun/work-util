@@ -61,7 +61,10 @@ const Login: React.FC = () => {
               className="form-input"
               placeholder="이메일 주소를 입력하세요"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => {
+                setUsername(e.target.value)
+                if (error) setError('') // 입력 시 에러 메시지 제거
+              }}
               required
             />
           </div>
@@ -73,7 +76,10 @@ const Login: React.FC = () => {
               className="form-input"
               placeholder="비밀번호를 입력하세요"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value)
+                if (error) setError('') // 입력 시 에러 메시지 제거
+              }}
               required
             />
           </div>

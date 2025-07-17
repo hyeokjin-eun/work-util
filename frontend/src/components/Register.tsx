@@ -17,6 +17,8 @@ const Register: React.FC = () => {
       ...formData,
       [e.target.name]: e.target.value
     })
+    // 입력 시 에러 메시지 제거
+    if (error) setError('')
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,32 +31,52 @@ const Register: React.FC = () => {
     }
 
     try {
-      // Mock registration - in production, this would call your backend API
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: formData.username,
+          email: formData.email,
+          password: formData.password
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.detail || '회원가입에 실패했습니다.')
+      }
+
+      const data = await response.json()
+      
+      // Registration successful - store tokens and user info
+      localStorage.setItem('access_token', data.access_token)
+      localStorage.setItem('refresh_token', data.refresh_token)
+      localStorage.setItem('username', data.user.username)
+      
       alert('회원가입이 완료되었습니다!')
-      navigate('/login')
-    } catch (err) {
-      setError('회원가입에 실패했습니다. 다시 시도해주세요.')
+      navigate('/home') // Navigate directly to home since user is already logged in
+    } catch (err: any) {
+      setError(err.message || '회원가입에 실패했습니다. 다시 시도해주세요.')
     }
   }
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <div className="app-logo">
-          <div className="logo-icon">
-            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="100" cy="100" r="90" fill="#3b82f6" opacity="0.1"/>
-              <path d="M100 40 L130 70 L130 110 L100 140 L70 110 L70 70 Z" fill="#3b82f6"/>
-              <circle cx="100" cy="90" r="20" fill="white"/>
+    <div className="login-container">
+      <div className="login-card">
+        <div className="logo-section">
+          <div className="logo-icon-login animate-float">
+            <svg viewBox="0 0 24 24" style={{ width: '32px', height: '32px', stroke: 'white', fill: 'none', strokeWidth: 2 }}>
+              <path d="M9 12l2 2 4-4"/>
+              <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"/>
+              <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3"/>
             </svg>
           </div>
-          <div className="app-title">SmartWork</div>
+          <div className="app-title-login animate-float-delayed">SmartWork</div>
         </div>
 
-        <div className="login-title">회원가입</div>
-        <div className="login-subtitle">새 계정을 만들어보세요</div>
-
-        <form onSubmit={handleSubmit} className="auth-form">
+        <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label className="form-label">사용자명</label>
             <input

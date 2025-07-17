@@ -2,12 +2,38 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../components/AuthContext'
 import Layout from '../components/Layout'
+import { apiCall } from '../utils/api'
 import '../styles/Dashboard.css'
 
+interface DashboardStats {
+  todos: {
+    total: number
+    completed: number
+    pending: number
+    completionRate: number
+  }
+  meetings: {
+    total: number
+    thisWeek: number
+  }
+  wbs: {
+    totalProjects: number
+    totalTasks: number
+    completedTasks: number
+    inProgressProjects: number
+  }
+}
+
 const Dashboard: React.FC = () => {
-  const { user } = useAuth()
+  const { user, token, isLoading } = useAuth()
   const [currentTime, setCurrentTime] = useState(new Date())
   const [animateStats, setAnimateStats] = useState(false)
+  const [stats, setStats] = useState<DashboardStats>({
+    todos: { total: 0, completed: 0, pending: 0, completionRate: 0 },
+    meetings: { total: 0, thisWeek: 0 },
+    wbs: { totalProjects: 0, totalTasks: 0, completedTasks: 0, inProgressProjects: 0 }
+  })
+  const [statsLoading, setStatsLoading] = useState(true)
 
   useEffect(() => {
     // Scroll to top when Dashboard component loads
@@ -27,6 +53,83 @@ const Dashboard: React.FC = () => {
     }
   }, [])
 
+  useEffect(() => {
+    if (!isLoading && token) {
+      loadDashboardStats()
+    }
+  }, [isLoading, token])
+
+  const loadDashboardStats = async () => {
+    try {
+      setStatsLoading(true)
+      
+      // 병렬로 모든 데이터 로드
+      const [todosResponse, meetingsResponse, wbsProjectsResponse] = await Promise.all([
+        apiCall('/api/todos', { method: 'GET', token }),
+        apiCall('/api/meetings', { method: 'GET', token }),
+        apiCall('/api/wbs/projects', { method: 'GET', token })
+      ])
+
+      // 할일 통계 계산
+      let todoStats = { total: 0, completed: 0, pending: 0, completionRate: 0 }
+      if (todosResponse.ok) {
+        const todos = await todosResponse.json()
+        todoStats.total = todos.length
+        todoStats.completed = todos.filter((todo: any) => todo.completed).length
+        todoStats.pending = todoStats.total - todoStats.completed
+        todoStats.completionRate = todoStats.total > 0 ? Math.round((todoStats.completed / todoStats.total) * 100) : 0
+      }
+
+      // 회의록 통계 계산
+      let meetingStats = { total: 0, thisWeek: 0 }
+      if (meetingsResponse.ok) {
+        const meetings = await meetingsResponse.json()
+        meetingStats.total = meetings.length
+        
+        // 이번 주 회의록 계산
+        const oneWeekAgo = new Date()
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
+        meetingStats.thisWeek = meetings.filter((meeting: any) => 
+          new Date(meeting.created_at) >= oneWeekAgo
+        ).length
+      }
+
+      // WBS 통계 계산
+      let wbsStats = { totalProjects: 0, totalTasks: 0, completedTasks: 0, inProgressProjects: 0 }
+      if (wbsProjectsResponse.ok) {
+        const projects = await wbsProjectsResponse.json()
+        wbsStats.totalProjects = projects.length
+        wbsStats.inProgressProjects = projects.filter((project: any) => 
+          project.status === 'in_progress'
+        ).length
+
+        // 각 프로젝트의 작업들 로드
+        const taskPromises = projects.map((project: any) =>
+          apiCall(`/api/wbs/projects/${project.id}/tasks`, { method: 'GET', token })
+        )
+        
+        const taskResponses = await Promise.all(taskPromises)
+        for (const taskResponse of taskResponses) {
+          if (taskResponse.ok) {
+            const tasks = await taskResponse.json()
+            wbsStats.totalTasks += tasks.length
+            wbsStats.completedTasks += tasks.filter((task: any) => task.status === 'completed').length
+          }
+        }
+      }
+
+      setStats({
+        todos: todoStats,
+        meetings: meetingStats,
+        wbs: wbsStats
+      })
+    } catch (error) {
+      console.error('대시보드 통계 로드 실패:', error)
+    } finally {
+      setStatsLoading(false)
+    }
+  }
+
   const getGreeting = () => {
     const hour = currentTime.getHours()
     if (hour < 12) return '좋은 아침입니다'
@@ -45,7 +148,7 @@ const Dashboard: React.FC = () => {
   return (
     <Layout 
       pageTitle="대시보드"
-      pageSubtitle="좋은 저녁입니다, test님!<br/>오늘도 생산적인 하루 보내세요"
+      pageSubtitle={`${getGreeting()}, ${user?.username || 'User'}님!<br/>오늘도 생산적인 하루 보내세요`}
       pageIcon={dashboardIcon}
     >
       <div className="dashboard-container">
@@ -103,7 +206,7 @@ const Dashboard: React.FC = () => {
               </svg>
             </div>
             <div className="stat-content">
-              <div className="stat-value">5</div>
+              <div className="stat-value">{statsLoading ? '...' : stats.todos.total}</div>
               <div className="stat-label">전체 할일</div>
             </div>
           </div>
@@ -114,7 +217,7 @@ const Dashboard: React.FC = () => {
               </svg>
             </div>
             <div className="stat-content">
-              <div className="stat-value">3</div>
+              <div className="stat-value">{statsLoading ? '...' : stats.todos.completed}</div>
               <div className="stat-label">완료된 할일</div>
             </div>
           </div>
@@ -126,8 +229,20 @@ const Dashboard: React.FC = () => {
               </svg>
             </div>
             <div className="stat-content">
-              <div className="stat-value">60%</div>
+              <div className="stat-value">{statsLoading ? '...' : `${stats.todos.completionRate}%`}</div>
               <div className="stat-label">완료율</div>
+            </div>
+          </div>
+          <div className={`modern-stat-card ${animateStats ? 'animate' : ''}`} style={{ animationDelay: '0.3s' }}>
+            <div className="stat-icon stat-icon-primary">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M3 3h18v18H3z"/>
+                <path d="M12 8v8m-4-4h8M7 3v18m10-18v18"/>
+              </svg>
+            </div>
+            <div className="stat-content">
+              <div className="stat-value">{statsLoading ? '...' : stats.wbs.totalProjects}</div>
+              <div className="stat-label">WBS 프로젝트</div>
             </div>
           </div>
         </div>
@@ -135,20 +250,22 @@ const Dashboard: React.FC = () => {
         {/* Progress Section */}
         <div className="progress-section">
           <div className="section-header">
-            <h3 className="section-title">오늘의 진행률</h3>
+            <h3 className="section-title">전체 진행률</h3>
             <div className="pulse-indicator"></div>
           </div>
           <div className="progress-card">
             <div className="progress-info">
               <span className="progress-label">할일 완료율</span>
-              <span className="progress-percentage">60%</span>
+              <span className="progress-percentage">{statsLoading ? '...' : `${stats.todos.completionRate}%`}</span>
             </div>
             <div className="progress-bar-container">
               <div className="progress-bar">
-                <div className="progress-fill" style={{ width: '60%' }}></div>
+                <div className="progress-fill" style={{ width: `${stats.todos.completionRate}%` }}></div>
               </div>
             </div>
-            <div className="progress-details">3/5 완료</div>
+            <div className="progress-details">
+              {statsLoading ? '로딩 중...' : `${stats.todos.completed}/${stats.todos.total} 완료`}
+            </div>
           </div>
         </div>
 
@@ -194,18 +311,16 @@ const Dashboard: React.FC = () => {
               </div>
               <div className="action-arrow">→</div>
             </Link>
-            <Link to="/qr-generator" className="action-card action-card-info">
+            <Link to="/wbs" className="action-card action-card-info">
               <div className="action-icon">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="3" y="3" width="7" height="7"/>
-                  <rect x="14" y="3" width="7" height="7"/>
-                  <rect x="14" y="14" width="7" height="7"/>
-                  <rect x="3" y="14" width="7" height="7"/>
+                  <path d="M3 3h18v18H3z"/>
+                  <path d="M12 8v8m-4-4h8M7 3v18m10-18v18"/>
                 </svg>
               </div>
               <div className="action-content">
-                <div className="action-title">QR 코드 생성</div>
-                <div className="action-subtitle">링크를 공유하세요</div>
+                <div className="action-title">WBS 관리</div>
+                <div className="action-subtitle">프로젝트를 구조화하세요</div>
               </div>
               <div className="action-arrow">→</div>
             </Link>
@@ -215,7 +330,7 @@ const Dashboard: React.FC = () => {
         {/* Recent Activity */}
         <div className="activity-section">
           <div className="section-header">
-            <h3 className="section-title">최근 활동</h3>
+            <h3 className="section-title">프로젝트 현황</h3>
             <div className="activity-indicator">
               <div className="activity-dot"></div>
               <span>실시간</span>
@@ -225,39 +340,57 @@ const Dashboard: React.FC = () => {
             <div className="activity-summary">
               <div className="activity-stats">
                 <div className="activity-stat">
-                  <div className="activity-stat-value">0</div>
-                  <div className="activity-stat-label">회의록</div>
+                  <div className="activity-stat-value">{statsLoading ? '...' : stats.meetings.total}</div>
+                  <div className="activity-stat-label">전체 회의록</div>
                 </div>
                 <div className="activity-stat">
-                  <div className="activity-stat-value">0</div>
-                  <div className="activity-stat-label">프로젝트</div>
+                  <div className="activity-stat-value">{statsLoading ? '...' : stats.meetings.thisWeek}</div>
+                  <div className="activity-stat-label">이번주 회의</div>
                 </div>
                 <div className="activity-stat">
-                  <div className="activity-stat-value">5</div>
-                  <div className="activity-stat-label">도구 사용</div>
+                  <div className="activity-stat-value">{statsLoading ? '...' : stats.wbs.totalTasks}</div>
+                  <div className="activity-stat-label">총 작업</div>
+                </div>
+                <div className="activity-stat">
+                  <div className="activity-stat-value">{statsLoading ? '...' : stats.wbs.inProgressProjects}</div>
+                  <div className="activity-stat-label">진행중 프로젝트</div>
                 </div>
               </div>
               <div className="activity-chart">
-                <div className="chart-bar" style={{ height: '40%' }}></div>
-                <div className="chart-bar" style={{ height: '60%' }}></div>
-                <div className="chart-bar" style={{ height: '30%' }}></div>
-                <div className="chart-bar" style={{ height: '80%' }}></div>
-                <div className="chart-bar" style={{ height: '50%' }}></div>
+                <div className="chart-bar" style={{ height: `${Math.max(20, (stats.todos.total / 10) * 100)}%` }}></div>
+                <div className="chart-bar" style={{ height: `${Math.max(20, (stats.todos.completed / 10) * 100)}%` }}></div>
+                <div className="chart-bar" style={{ height: `${Math.max(20, (stats.meetings.total / 5) * 100)}%` }}></div>
+                <div className="chart-bar" style={{ height: `${Math.max(20, (stats.wbs.totalProjects / 5) * 100)}%` }}></div>
+                <div className="chart-bar" style={{ height: `${Math.max(20, (stats.wbs.totalTasks / 20) * 100)}%` }}></div>
               </div>
             </div>
-            <div className="activity-message">
-              <div className="no-activity-icon">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M12 20V10"/>
-                  <path d="M18 20V4"/>
-                  <path d="M6 20v-4"/>
-                </svg>
+            {stats.todos.total === 0 && stats.meetings.total === 0 && stats.wbs.totalProjects === 0 ? (
+              <div className="activity-message">
+                <div className="no-activity-icon">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M12 20V10"/>
+                    <path d="M18 20V4"/>
+                    <path d="M6 20v-4"/>
+                  </svg>
+                </div>
+                <div className="no-activity-text">
+                  <div className="no-activity-title">시작할 준비가 되었습니다!</div>
+                  <div className="no-activity-subtitle">첫 번째 작업을 추가해보세요</div>
+                </div>
               </div>
-              <div className="no-activity-text">
-                <div className="no-activity-title">시작할 준비가 되었습니다!</div>
-                <div className="no-activity-subtitle">첫 번째 작업을 추가해보세요</div>
+            ) : (
+              <div className="activity-message">
+                <div className="no-activity-icon">
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                  </svg>
+                </div>
+                <div className="no-activity-text">
+                  <div className="no-activity-title">좋은 진행상황입니다!</div>
+                  <div className="no-activity-subtitle">계속해서 생산적인 작업을 이어가세요</div>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

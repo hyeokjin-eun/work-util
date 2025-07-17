@@ -8,6 +8,7 @@ import Home from './pages/Home'
 import Dashboard from './pages/Dashboard'
 import TodoList from './pages/TodoList'
 import AddTodo from './pages/AddTodo'
+import TodoDetail from './pages/TodoDetail'
 import Calendar from './pages/Calendar'
 import MeetingNotes from './pages/MeetingNotes'
 import Utilities from './pages/Utilities'
@@ -16,6 +17,13 @@ import JsonCompare from './pages/JsonCompare'
 import QrGenerator from './pages/QrGenerator'
 import WbsManager from './pages/WbsManager'
 import MyPage from './pages/MyPage'
+import AddMeeting from './pages/AddMeeting'
+import MeetingDetail from './pages/MeetingDetail'
+import WBSList from './pages/WBSList'
+import AddWBS from './pages/AddWBS'
+import EditWBS from './pages/EditWBS'
+import WBSDetail from './pages/WBSDetail'
+import AddWBSTask from './pages/AddWBSTask'
 import './App.css'
 
 function App() {
@@ -82,6 +90,14 @@ function App() {
             }
           />
           <Route
+            path="/todo/:id"
+            element={
+              <ProtectedRoute>
+                <TodoDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/calendar"
             element={
               <ProtectedRoute>
@@ -94,6 +110,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <MeetingNotes />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/meeting/add"
+            element={
+              <ProtectedRoute>
+                <AddMeeting />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/meeting/:id"
+            element={
+              <ProtectedRoute>
+                <MeetingDetail />
               </ProtectedRoute>
             }
           />
@@ -134,6 +166,54 @@ function App() {
             element={
               <ProtectedRoute>
                 <WbsManager />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/wbs"
+            element={
+              <ProtectedRoute>
+                <WBSList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/wbs/add"
+            element={
+              <ProtectedRoute>
+                <AddWBS />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/wbs/edit/:id"
+            element={
+              <ProtectedRoute>
+                <EditWBS />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/wbs/detail/:id"
+            element={
+              <ProtectedRoute>
+                <WBSDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/wbs/projects/:projectId/tasks/add"
+            element={
+              <ProtectedRoute>
+                <AddWBSTask />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/wbs/:id"
+            element={
+              <ProtectedRoute>
+                <WBSDetail />
               </ProtectedRoute>
             }
           />

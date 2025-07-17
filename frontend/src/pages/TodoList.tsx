@@ -4,6 +4,7 @@ import { useAuth } from '../components/AuthContext'
 import Layout from '../components/Layout'
 import CustomSelect from '../components/CustomSelect'
 import DatePicker from '../components/DatePicker'
+import { apiCall, apiCallWithJson } from '../utils/api'
 import '../styles/TodoList.css'
 
 interface Todo {
@@ -53,26 +54,9 @@ const TodoList: React.FC = () => {
       }
       
       console.log('할일 목록 로드 시도 중...')
-      const response = await fetch('/api/todos', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+      const todosData = await apiCallWithJson<any[]>('/api/todos', {
+        token
       })
-      
-      console.log('API 응답 상태:', response.status)
-      
-      if (!response.ok) {
-        if (response.status === 401) {
-          console.log('인증 실패. 로그인 페이지로 이동합니다.')
-          navigate('/login')
-          return
-        }
-        const errorText = await response.text()
-        console.error('API 에러:', errorText)
-        throw new Error(`할일 목록을 불러오는데 실패했습니다. (${response.status})`)
-      }
-      
-      const todosData = await response.json()
       console.log('할일 목록 로드 성공:', todosData)
       
       // API 응답 데이터의 필드명을 프론트엔드 형식으로 변환
@@ -251,12 +235,9 @@ const TodoList: React.FC = () => {
         return
       }
 
-      const response = await fetch('/api/todos', {
+      await apiCallWithJson('/api/todos', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        token,
         body: JSON.stringify({
           title: newTodo.title,
           description: newTodo.description,
@@ -267,14 +248,6 @@ const TodoList: React.FC = () => {
           tags: []
         })
       })
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          navigate('/login')
-          return
-        }
-        throw new Error('할일 추가에 실패했습니다.')
-      }
 
       // 할일 목록 다시 로드
       await loadTodos()
@@ -305,22 +278,11 @@ const TodoList: React.FC = () => {
         return
       }
       
-      const response = await fetch(`/api/todos/${id}`, {
+      await apiCallWithJson(`/api/todos/${id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        token,
         body: JSON.stringify({ status })
       })
-      
-      if (!response.ok) {
-        if (response.status === 401) {
-          navigate('/login')
-          return
-        }
-        throw new Error('할일 상태 업데이트에 실패했습니다.')
-      }
       
       // 성공 시 로컬 상태 업데이트
       setTodos(todos.map(todo => 
@@ -340,20 +302,10 @@ const TodoList: React.FC = () => {
         return
       }
       
-      const response = await fetch(`/api/todos/${id}`, {
+      await apiCallWithJson(`/api/todos/${id}`, {
         method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
+        token
       })
-      
-      if (!response.ok) {
-        if (response.status === 401) {
-          navigate('/login')
-          return
-        }
-        throw new Error('할일 삭제에 실패했습니다.')
-      }
       
       // 성공 시 로컬 상태 업데이트
       setTodos(todos.filter(todo => todo.id !== id))
@@ -480,7 +432,12 @@ const TodoList: React.FC = () => {
                   
                   <div className="todo-content">
                     <div className="todo-header">
-                      <h3 className="todo-title">{todo.title}</h3>
+                      <h3 
+                        className="todo-title clickable"
+                        onClick={() => navigate(`/todo/${todo.id}`)}
+                      >
+                        {todo.title}
+                      </h3>
                       <div className="todo-badges">
                         <span 
                           className="priority-badge"
@@ -542,6 +499,13 @@ const TodoList: React.FC = () => {
                   </div>
                   
                   <div className="todo-actions">
+                    <button 
+                      className="detail-btn"
+                      onClick={() => navigate(`/todo/${todo.id}`)}
+                      title="상세 보기"
+                    >
+                      📝
+                    </button>
                     <CustomSelect
                       options={statusOptions}
                       value={todo.status}

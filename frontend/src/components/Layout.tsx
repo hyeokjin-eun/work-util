@@ -53,10 +53,7 @@ const Layout: React.FC<LayoutProps> = ({
             className="back-button"
             onClick={() => navigate(-1)}
           >
-            <svg viewBox="0 0 24 24" style={{ width: '20px', height: '20px', stroke: 'currentColor', fill: 'none', strokeWidth: 2 }}>
-              <path d="M19 12H5"/>
-              <path d="M12 19l-7-7 7-7"/>
-            </svg>
+            ←
           </button>
           <h2 className="page-title">{pageTitle}</h2>
         </div>
@@ -68,10 +65,7 @@ const Layout: React.FC<LayoutProps> = ({
               className="back-button"
               onClick={() => navigate(-1)}
             >
-              <svg viewBox="0 0 24 24" style={{ width: '20px', height: '20px', stroke: 'currentColor', fill: 'none', strokeWidth: 2 }}>
-                <path d="M19 12H5"/>
-                <path d="M12 19l-7-7 7-7"/>
-              </svg>
+              ←
             </button>
             <h1>{pageTitle}</h1>
           </div>

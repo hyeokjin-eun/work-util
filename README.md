@@ -1,13 +1,31 @@
-# Work-Util
+# SmartWork - 생산성 향상을 위한 통합 업무 관리 시스템
 
 업무 효율성을 높이는 통합 유틸리티 도구 모음입니다.
 
 ## 📦 버전 관리 (Version Management)
 
 ### 🏷️ 현재 버전
-- **v1.1.2** (2025-07-16) - 할일 관리 시스템 UI/UX 대폭 개선 및 기능 확장
+- **v1.2.0** (2025-07-17) - 완전한 통합 업무 관리 시스템 구현 완료
 
 ### 📋 버전 히스토리
+
+#### v1.2.0 (2025-07-17)
+- 🔥 **완전한 통합 업무 관리 시스템 구현**
+- 📊 **대시보드 실시간 데이터 연결**: 할일, 회의록, WBS 통계 실시간 표시
+- 📅 **캘린더 시스템 완성**: 월별 뷰, 할일/회의/프로젝트 일정 통합 표시
+- 👤 **마이페이지 고도화**: 사용자 통계, 생산성 점수, 비밀번호 변경 기능
+- 🏗️ **WBS 계층 구조 완성**: 최대 5레벨 작업 계층, 모바일 최적화
+- 🎨 **UI/UX 대폭 개선**: 일관된 디자인 시스템, 반응형 레이아웃
+- 🔐 **보안 강화**: JWT 토큰 자동 갱신, 비밀번호 변경 기능
+- 🌐 **완전한 배포 시스템**: nginx + SSL/HTTPS, 자동 배포 스크립트
+
+**주요 신규 기능:**
+- 실시간 통합 대시보드 (할일 완료율, 프로젝트 진행률, 회의록 활동)
+- 캘린더 이벤트 시스템 (날짜별 할일/회의/프로젝트 표시)
+- 마이페이지 사용자 통계 (생산성 점수, 활동 요약)
+- WBS 작업 계층 구조 (부모-자식 관계, 레벨별 시각화)
+- 비밀번호 변경 및 프로필 관리
+- 완전한 데이터 연동 및 실시간 업데이트
 
 #### v1.1.2 (2025-07-16)
 - 🎨 **UI/UX 대폭 개선**: 전체적인 사용자 경험 향상
@@ -412,6 +430,205 @@ curl -X POST https://next-exit.me/api/todos \
 - [ ] 로딩 상태 표시 동작
 - [ ] 에러 처리 동작
 - [ ] 마감일 표시 및 알림 동작
+
+## 🔧 v1.2.0 상세 구현 내역
+
+### 📋 주요 작업 내역 (2025-07-17)
+
+#### 1. 통합 대시보드 시스템 구현
+- **실시간 데이터 연결**: 할일, 회의록, WBS 프로젝트 API 병렬 호출
+- **통계 계산 로직**: 완료율, 진행률, 생산성 점수 자동 계산
+- **시각적 차트**: 실제 데이터 기반 막대 차트 및 진행률 표시
+- **빠른 실행 메뉴**: 각 기능으로의 직접 접근 링크
+- **활동 요약**: 프로젝트 현황 실시간 업데이트
+
+#### 2. 캘린더 시스템 완성
+- **월별 캘린더 뷰**: 모든 월 정상 표시 및 월 변경 네비게이션
+- **통합 이벤트 표시**: 할일 마감일, 회의 일정, 프로젝트 마감일 통합
+- **이벤트 타입별 색상 구분**: 
+  - 🟢 완료된 할일 (초록색)
+  - 🟡 미완료 할일/회의 (주황색)
+  - 🔵 프로젝트 (파란색)
+- **날짜별 이벤트 표시**: 각 날짜에 최대 3개 이벤트 점으로 표시
+- **타임존 문제 해결**: 로컬 날짜 직접 생성으로 정확한 날짜 매칭
+
+#### 3. 마이페이지 고도화
+- **사용자 프로필 통계**: 실제 데이터 기반 활동 통계
+- **생산성 점수 계산**: 할일 완료율 + 활동 점수 알고리즘
+- **비밀번호 변경 기능**: 모달 UI, 보안 검증, 실시간 피드백
+- **가입일 표시**: 사용자 계정 생성 시점 표시
+- **활동 요약**: 전체 할일, 회의록, WBS 프로젝트 통계
+
+#### 4. WBS 계층 구조 완성
+- **다단계 작업 계층**: 최대 5레벨 부모-자식 관계 구현
+- **레벨별 시각화**: 들여쓰기 및 색상으로 계층 구조 표현
+- **작업 추가 시 레벨 계산**: 부모 작업 기준 자동 레벨 설정
+- **모바일 최적화**: 계층 구조의 모바일 친화적 표현
+- **API 응답 모델 수정**: Pydantic 모델 오류 해결
+
+#### 5. 보안 및 인증 강화
+- **JWT 토큰 자동 갱신**: 만료 시 자동 리프레시 토큰 사용
+- **비밀번호 변경 API**: 현재 비밀번호 검증 및 새 비밀번호 설정
+- **토큰 기반 API 호출**: 모든 데이터 API에 JWT 토큰 인증
+- **사용자별 데이터 분리**: 토큰 기반 사용자 데이터 필터링
+
+#### 6. UI/UX 통합 개선
+- **일관된 디자인 시스템**: 모든 페이지 통일된 스타일
+- **반응형 레이아웃**: 데스크톱/모바일 최적화
+- **로딩 상태 관리**: 데이터 로딩 중 사용자 피드백
+- **에러 처리**: 네트워크 오류 및 API 에러 적절한 처리
+
+### 🗄️ 최종 데이터베이스 스키마
+
+#### Users 테이블
+```sql
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    hashed_password VARCHAR(100) NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+#### Todos 테이블
+```sql
+CREATE TABLE todos (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    title VARCHAR(200) NOT NULL,
+    description TEXT,
+    priority VARCHAR(20) DEFAULT 'medium',
+    due_date DATE,
+    completed BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+```
+
+#### Meetings 테이블
+```sql
+CREATE TABLE meetings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    title VARCHAR(200) NOT NULL,
+    date DATE NOT NULL,
+    participants TEXT,
+    agenda TEXT,
+    content TEXT,
+    conclusion TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+```
+
+#### WBS_Projects 테이블
+```sql
+CREATE TABLE wbs_projects (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    title VARCHAR(200) NOT NULL,
+    description TEXT,
+    start_date DATE,
+    end_date DATE,
+    status VARCHAR(20) DEFAULT 'planning',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+```
+
+#### WBS_Tasks 테이블
+```sql
+CREATE TABLE wbs_tasks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    project_id INTEGER NOT NULL,
+    parent_id INTEGER,
+    title VARCHAR(200) NOT NULL,
+    description TEXT,
+    duration INTEGER DEFAULT 0,
+    level INTEGER DEFAULT 1,
+    status VARCHAR(20) DEFAULT 'planned',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (project_id) REFERENCES wbs_projects(id),
+    FOREIGN KEY (parent_id) REFERENCES wbs_tasks(id)
+);
+```
+
+### 🚀 API 엔드포인트 완성
+
+#### 인증 API
+- `POST /api/auth/register` - 회원가입
+- `POST /api/auth/login` - 로그인
+- `GET /api/auth/me` - 현재 사용자 정보
+- `PUT /api/auth/change-password` - 비밀번호 변경
+- `POST /api/auth/refresh` - 토큰 갱신
+
+#### 할일 관리 API
+- `GET /api/todos` - 할일 목록 조회
+- `POST /api/todos` - 새 할일 생성
+- `GET /api/todos/{id}` - 할일 상세 조회
+- `PUT /api/todos/{id}` - 할일 수정
+- `DELETE /api/todos/{id}` - 할일 삭제
+
+#### 회의록 API
+- `GET /api/meetings` - 회의록 목록 조회
+- `POST /api/meetings` - 새 회의록 생성
+- `GET /api/meetings/{id}` - 회의록 상세 조회
+- `PUT /api/meetings/{id}` - 회의록 수정
+- `DELETE /api/meetings/{id}` - 회의록 삭제
+
+#### WBS 관리 API
+- `GET /api/wbs/projects` - WBS 프로젝트 목록 조회
+- `POST /api/wbs/projects` - 새 WBS 프로젝트 생성
+- `GET /api/wbs/projects/{id}` - WBS 프로젝트 상세 조회
+- `PUT /api/wbs/projects/{id}` - WBS 프로젝트 수정
+- `DELETE /api/wbs/projects/{id}` - WBS 프로젝트 삭제
+- `GET /api/wbs/projects/{id}/tasks` - WBS 작업 목록 조회
+- `POST /api/wbs/projects/{id}/tasks` - 새 WBS 작업 생성
+- `PUT /api/wbs/tasks/{id}` - WBS 작업 수정
+- `DELETE /api/wbs/tasks/{id}` - WBS 작업 삭제
+
+### 🛠️ 주요 해결 과제
+
+#### 1. 캘린더 날짜 타임존 문제
+- **문제**: `toISOString()` 사용 시 UTC 변환으로 날짜 불일치
+- **해결**: 로컬 날짜 직접 생성 (`YYYY-MM-DD` 형식)
+
+#### 2. 비밀번호 변경 API 연동 문제
+- **문제**: 필드명 불일치 (`current_password` vs `currentPassword`)
+- **해결**: 백엔드 스키마에 맞는 필드명 사용
+
+#### 3. WBS 계층 구조 구현
+- **문제**: 다단계 부모-자식 관계 및 레벨 계산
+- **해결**: 재귀적 레벨 계산 및 시각적 들여쓰기
+
+#### 4. API 응답 모델 오류
+- **문제**: Pydantic 모델 직렬화 오류
+- **해결**: 일반 딕셔너리 반환으로 변경
+
+#### 5. 실시간 데이터 연동
+- **문제**: 하드코딩된 Mock 데이터
+- **해결**: 실제 API 호출 및 Promise.all 병렬 처리
+
+### 📊 성능 및 보안 최적화
+
+#### 성능 최적화
+- **병렬 API 호출**: Promise.all을 통한 동시 데이터 로드
+- **로딩 상태 관리**: 사용자 경험 향상
+- **메모리 효율성**: 불필요한 리렌더링 방지
+- **nginx 캐싱**: 정적 파일 효율적 캐싱
+
+#### 보안 강화
+- **JWT 토큰 관리**: 자동 갱신 및 만료 처리
+- **사용자 데이터 분리**: 토큰 기반 접근 제어
+- **입력 검증**: 클라이언트/서버 양쪽 검증
+- **HTTPS 강제**: 모든 통신 암호화
 
 ## 🔧 v1.1.2 상세 구현 내역
 
@@ -851,11 +1068,21 @@ sudo ./deploy-nginx.sh
 ### 📊 **현재 서비스 상태**
 
 - 🌐 **URL**: https://next-exit.me
-- 🔐 **인증**: JWT 기반 로그인/회원가입
-- 📋 **기능**: 할일관리, 회의록, JSON도구, QR생성기, WBS관리
+- 🔐 **인증**: JWT 기반 로그인/회원가입, 토큰 자동 갱신
+- 📋 **기능**: 
+  - ✅ 할일관리 (우선순위, 마감일, 상태 관리)
+  - ✅ 회의록 (작성, 수정, 삭제)
+  - ✅ WBS 관리 (프로젝트, 작업 계층 구조)
+  - ✅ 캘린더 (월별 뷰, 통합 이벤트 표시)
+  - ✅ 대시보드 (실시간 통계, 차트)
+  - ✅ 마이페이지 (프로필, 통계, 비밀번호 변경)
+  - ✅ JSON도구 (포맷터, 비교기)
+  - ✅ QR생성기 (커스터마이징)
 - 🔄 **자동 HTTPS**: HTTP → HTTPS 리다이렉트
 - 📈 **모니터링**: 로그 기반 상태 확인
 - 🚀 **배포**: `deploy-production.sh` 스크립트 사용
+- 📊 **데이터베이스**: SQLite with SQLAlchemy ORM
+- 🎨 **UI/UX**: 완전 반응형 디자인, 일관된 사용자 경험
 
 ## 🤝 기여하기
 

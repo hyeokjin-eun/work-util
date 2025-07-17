@@ -4,6 +4,12 @@
   width: 100%;
   min-width: 200px;
   outline: none;
+  /* 브라우저별 기본 스타일 완전 제거 */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: none;
+  border: none;
 }
 
 .custom-select-trigger {
@@ -105,7 +111,8 @@
   bottom: 100%;
   left: 0;
   right: 0;
-  background: white;
+  background: white !important;
+  background-color: white !important;
   border: 2px solid #e2e8f0;
   border-radius: 12px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
@@ -113,6 +120,10 @@
   margin-bottom: 4px;
   max-height: 240px;
   overflow-y: auto;
+  /* 브라우저별 기본 스타일 제거 */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
 
@@ -123,6 +134,12 @@
   cursor: pointer;
   transition: background-color 0.2s ease;
   position: relative;
+  background: white !important;
+  background-color: white !important;
+  /* 브라우저별 기본 스타일 제거 */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 
 .custom-select-option:first-child {
@@ -137,16 +154,19 @@
 
 .custom-select-option:hover,
 .custom-select-option.highlighted {
-  background: #f8fafc;
+  background: #f8fafc !important;
+  background-color: #f8fafc !important;
 }
 
 .custom-select-option.selected {
-  background: #eff6ff;
+  background: #eff6ff !important;
+  background-color: #eff6ff !important;
   font-weight: 600;
 }
 
 .custom-select-option.selected.highlighted {
-  background: #dbeafe;
+  background: #dbeafe !important;
+  background-color: #dbeafe !important;
 }
 
 .custom-select-option .option-icon {
@@ -221,35 +241,85 @@
   }
 }
 
-/* Dark Mode Support */
+/* Dark Mode Support - 모든 부분을 흰색 배경으로 유지 */
 @media (prefers-color-scheme: dark) {
   .custom-select-trigger {
-    background: #1f2937;
-    border-color: #374151;
-    color: #f3f4f6;
+    background: white !important;
+    background-color: white !important;
+    border-color: #e2e8f0 !important;
+    color: #2d3748 !important;
   }
   
   .custom-select-trigger:hover {
-    background: #111827;
-    border-color: #4b5563;
+    background: white !important;
+    background-color: white !important;
+    border-color: #cbd5e0 !important;
+    color: #2d3748 !important;
   }
   
+  .custom-select:focus .custom-select-trigger,
+  .custom-select.open .custom-select-trigger {
+    background: white !important;
+    background-color: white !important;
+    border-color: #3b82f6 !important;
+    color: #2d3748 !important;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1) !important;
+  }
+  
+  /* 다크 모드에서도 드롭다운은 항상 하얀색 배경 */
   .custom-select-dropdown {
-    background: #1f2937;
+    background: white !important;
+    background-color: white !important;
     border-color: #374151;
   }
   
+  /* 다크 모드에서도 옵션들은 하얀색 배경에 검은색 텍스트 */
   .custom-select-option {
-    color: #f3f4f6;
+    background: white !important;
+    background-color: white !important;
+    color: #2d3748 !important;
   }
   
   .custom-select-option:hover,
   .custom-select-option.highlighted {
-    background: #374151;
+    background: #f8fafc !important;
+    background-color: #f8fafc !important;
+    color: #2d3748 !important;
   }
   
   .custom-select-option.selected {
-    background: #1e3a8a;
+    background: #eff6ff !important;
+    background-color: #eff6ff !important;
+    color: #1e40af !important;
+  }
+  
+  .custom-select-option.selected.highlighted {
+    background: #dbeafe !important;
+    background-color: #dbeafe !important;
+    color: #1e40af !important;
+  }
+  
+  /* 다크모드에서 화살표 아이콘 색상 */
+  .custom-select-trigger .arrow-icon {
+    color: #6b7280 !important;
+  }
+  
+  .custom-select.open .arrow-icon {
+    color: #3b82f6 !important;
+  }
+  
+  /* 다크모드에서 placeholder 색상 */
+  .custom-select-trigger .placeholder {
+    color: #9ca3af !important;
+  }
+  
+  /* 다크모드에서 선택된 옵션 텍스트 색상 */
+  .custom-select-trigger .option-label {
+    color: #2d3748 !important;
+  }
+  
+  .custom-select-trigger .option-description {
+    color: #6b7280 !important;
   }
 }
 
@@ -263,5 +333,65 @@
 .custom-select-option:focus {
   outline: 2px solid #3b82f6;
   outline-offset: -2px;
+}
+
+/* 브라우저별 추가 호환성 설정 */
+/* Chrome, Safari, Edge Webkit */
+.custom-select-dropdown::-webkit-scrollbar-track {
+  background: white !important;
+}
+
+/* Firefox */
+@-moz-document url-prefix() {
+  .custom-select-dropdown {
+    background: white !important;
+    background-color: white !important;
+  }
+  
+  .custom-select-option {
+    background: white !important;
+    background-color: white !important;
+  }
+}
+
+/* Internet Explorer */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+  .custom-select-dropdown {
+    background: white !important;
+    background-color: white !important;
+  }
+  
+  .custom-select-option {
+    background: white !important;
+    background-color: white !important;
+  }
+}
+
+/* 모든 브라우저에서 강제 적용 */
+.custom-select-dropdown,
+.custom-select-dropdown *,
+.custom-select-option,
+.custom-select-option * {
+  background-image: none !important;
+  background-attachment: initial !important;
+  background-origin: initial !important;
+  background-clip: initial !important;
+  background-position: initial !important;
+  background-repeat: initial !important;
+  background-size: initial !important;
+}
+
+/* 드롭다운 컨테이너 강제 스타일 */
+.custom-select-dropdown {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  color: #2d3748 !important;
+}
+
+/* 옵션 아이템 강제 스타일 */
+.custom-select-option {
+  background: #ffffff !important;
+  background-color: #ffffff !important;
+  color: #2d3748 !important;
 }
 

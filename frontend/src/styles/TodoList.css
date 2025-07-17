@@ -362,6 +362,16 @@
   color: #2d3748;
   margin: 0;
   line-height: 1.4;
+}
+
+.todo-title.clickable {
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.todo-title.clickable:hover {
+  color: #3b82f6;
+  text-decoration: underline;
   word-break: break-word;
 }
 
@@ -424,6 +434,28 @@
   align-items: flex-end;
   position: relative;
   z-index: 10;
+}
+
+.detail-btn {
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #374151;
+  min-width: 40px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.detail-btn:hover {
+  background: #e5e7eb;
+  border-color: #9ca3af;
+  transform: translateY(-1px);
 }
 
 /* Status Custom Select */

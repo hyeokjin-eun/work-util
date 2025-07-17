@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '../components/Layout'
+import CustomSelect from '../components/CustomSelect'
 import '../styles/JsonFormatter.css'
 
 const JsonFormatter: React.FC = () => {
@@ -8,6 +9,12 @@ const JsonFormatter: React.FC = () => {
   const [inputJson, setInputJson] = useState('')
   const [outputJson, setOutputJson] = useState('')
   const [outputColor, setOutputColor] = useState('#333')
+
+  const indentOptions = [
+    { value: '2', label: '2칸 간격 (컴팩트)', icon: '📐' },
+    { value: '4', label: '4칸 간격 (표준)', icon: '📏' },
+    { value: 'tab', label: '탭 간격 (넓게)', icon: '📑' }
+  ]
 
   useEffect(() => {
     // Scroll to top when JsonFormatter component loads
@@ -102,15 +109,12 @@ const JsonFormatter: React.FC = () => {
           
           <div className="form-group">
             <label className="form-label">들여쓰기 크기</label>
-            <select 
-              className="form-select" 
-              value={indentSize} 
-              onChange={(e) => setIndentSize(e.target.value)}
-            >
-              <option value="2">📐 2칸 간격 (컴팩트)</option>
-              <option value="4">📏 4칸 간격 (표준)</option>
-              <option value="tab">📑 탭 간격 (넓게)</option>
-            </select>
+            <CustomSelect
+              options={indentOptions}
+              value={indentSize}
+              onChange={(value) => setIndentSize(value as string)}
+              placeholder="들여쓰기 크기를 선택하세요"
+            />
           </div>
 
           <div className="form-group">

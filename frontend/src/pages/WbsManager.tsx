@@ -1,156 +1,120 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../components/AuthContext'
 import Layout from '../components/Layout'
+import { apiCall } from '../utils/api'
 import '../styles/WbsManager.css'
 
-interface WBSItem {
-  id: string
-  code: string
+interface WBSProject {
+  id: number
   title: string
-  level: number
-  status: 'not-started' | 'in-progress' | 'completed'
-  assignee: string
-  startDate: string
-  endDate: string
+  description: string
+  start_date: string
+  end_date: string
+  status: string
   progress: number
+  user_id: number
+  created_at: string
+  updated_at: string
 }
 
 const WbsManager: React.FC = () => {
-  useEffect(() => {
-    // Scroll to top when WbsManager component loads
-    window.scrollTo(0, 0)
-  }, [])
+  const { token, isLoading } = useAuth()
+  const navigate = useNavigate()
+  
+  const [projects, setProjects] = useState<WBSProject[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const [wbsItems] = useState<WBSItem[]>([
-    {
-      id: '1',
-      code: '1.0',
-      title: '프로젝트 계획',
-      level: 1,
-      status: 'in-progress',
-      assignee: 'PM팀',
-      startDate: '2025.07.01',
-      endDate: '2025.07.15',
-      progress: 80
-    },
-    {
-      id: '2',
-      code: '1.1',
-      title: '요구사항 분석',
-      level: 2,
-      status: 'completed',
-      assignee: '분석팀',
-      startDate: '2025.07.01',
-      endDate: '2025.07.05',
-      progress: 100
-    },
-    {
-      id: '3',
-      code: '1.2',
-      title: '시스템 설계',
-      level: 2,
-      status: 'in-progress',
-      assignee: '설계팀',
-      startDate: '2025.07.06',
-      endDate: '2025.07.15',
-      progress: 60
-    },
-    {
-      id: '4',
-      code: '2.0',
-      title: '개발 단계',
-      level: 1,
-      status: 'in-progress',
-      assignee: '개발팀',
-      startDate: '2025.07.16',
-      endDate: '2025.11.30',
-      progress: 20
-    },
-    {
-      id: '5',
-      code: '2.1',
-      title: '프론트엔드 개발',
-      level: 2,
-      status: 'not-started',
-      assignee: 'FE팀',
-      startDate: '2025.07.16',
-      endDate: '2025.10.15',
-      progress: 0
-    },
-    {
-      id: '6',
-      code: '2.1.1',
-      title: 'UI/UX 구현',
-      level: 3,
-      status: 'not-started',
-      assignee: 'UI팀',
-      startDate: '2025.07.16',
-      endDate: '2025.09.15',
-      progress: 0
-    },
-    {
-      id: '7',
-      code: '2.2',
-      title: '백엔드 개발',
-      level: 2,
-      status: 'not-started',
-      assignee: 'BE팀',
-      startDate: '2025.07.16',
-      endDate: '2025.10.31',
-      progress: 0
+  useEffect(() => {
+    window.scrollTo(0, 0)
+    
+    if (!isLoading && token) {
+      loadWBSProjects()
     }
-  ])
+  }, [isLoading, token])
+
+  const loadWBSProjects = async () => {
+    try {
+      setLoading(true)
+      
+      const response = await apiCall('/api/wbs/projects', {
+        method: 'GET',
+        token
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const data = await response.json()
+      setProjects(data)
+    } catch (error) {
+      console.error('WBS 프로젝트 목록 로드 실패:', error)
+      setProjects([])
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const wbsIcon = (
     <svg viewBox="0 0 24 24" style={{ width: '60px', height: '60px', stroke: 'white', fill: 'none', strokeWidth: 2 }}>
-      <rect x="3" y="3" width="7" height="7"/>
-      <rect x="14" y="3" width="7" height="7"/>
-      <rect x="3" y="14" width="7" height="7"/>
-      <rect x="14" y="14" width="7" height="7"/>
+      <path d="M3 3h18v18H3z"/>
+      <path d="M12 8v8m-4-4h8M7 3v18m10-18v18"/>
     </svg>
   )
 
-  const handleAddWBSItem = () => {
-    alert('WBS 항목 추가 기능이 실행됩니다.')
+  const handleCreateProject = () => {
+    navigate('/wbs/add')
   }
 
-  const handleEditProject = () => {
-    alert('프로젝트 편집 기능이 실행됩니다.')
+  const handleViewAllProjects = () => {
+    navigate('/wbs')
   }
 
-  const handleExportWBS = () => {
-    alert('WBS 내보내기 기능이 실행됩니다.')
+  const handleProjectClick = (projectId: number) => {
+    navigate(`/wbs/${projectId}`)
   }
 
-  const handleImportWBS = () => {
-    alert('WBS 가져오기 기능이 실행됩니다.')
-  }
-
-  const handleWBSItemClick = (item: WBSItem) => {
-    alert(`${item.code}: ${item.title} 상세 정보를 확인합니다.`)
-  }
-
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'not-started': return '시작 전'
-      case 'in-progress': return '진행중'
-      case 'completed': return '완료'
-      default: return status
+  const getStatusText = (status: string) => {
+    const statusMap: { [key: string]: string } = {
+      'planning': '계획',
+      'in_progress': '진행중',
+      'completed': '완료',
+      'on_hold': '보류'
     }
+    return statusMap[status] || status
   }
 
-  const getStatusClass = (status: string) => {
-    switch (status) {
-      case 'not-started': return 'not-started'
-      case 'in-progress': return 'in-progress'
-      case 'completed': return 'completed'
-      default: return 'not-started'
+  const getStatusColor = (status: string) => {
+    const colorMap: { [key: string]: string } = {
+      'planning': '#6b7280',
+      'in_progress': '#3b82f6',
+      'completed': '#10b981',
+      'on_hold': '#f59e0b'
     }
+    return colorMap[status] || '#6b7280'
   }
 
-  const totalTasks = wbsItems.length
-  const completedTasks = wbsItems.filter(item => item.status === 'completed').length
-  const inProgressTasks = wbsItems.filter(item => item.status === 'in-progress').length
-  const overallProgress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0
+  const formatDate = (dateString: string) => {
+    if (!dateString) return '-'
+    return new Date(dateString).toLocaleDateString('ko-KR')
+  }
+
+  const totalProjects = projects.length
+  const completedProjects = projects.filter(p => p.status === 'completed').length
+  const inProgressProjects = projects.filter(p => p.status === 'in_progress').length
+  const averageProgress = totalProjects > 0 ? Math.round(projects.reduce((sum, p) => sum + p.progress, 0) / totalProjects) : 0
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="loading-container">
+          <div className="loading-spinner"></div>
+          <p>WBS 프로젝트 정보를 불러오는 중...</p>
+        </div>
+      </Layout>
+    )
+  }
 
   return (
     <Layout 
@@ -159,52 +123,14 @@ const WbsManager: React.FC = () => {
       pageIcon={wbsIcon}
     >
       <div className="wbs-container">
-        {/* Project Header */}
-        <div className="project-header">
-          <div className="project-title">
-            SmartWork 개발 프로젝트
-            <div className="project-status in-progress">진행중</div>
-          </div>
-          
-          <div className="project-meta">
-            <div className="meta-item">
-              <div className="meta-label">시작일</div>
-              <div className="meta-value">2025.07.01</div>
-            </div>
-            <div className="meta-item">
-              <div className="meta-label">완료 예정일</div>
-              <div className="meta-value">2025.12.31</div>
-            </div>
-            <div className="meta-item">
-              <div className="meta-label">담당자</div>
-              <div className="meta-value">개발팀</div>
-            </div>
-            <div className="meta-item">
-              <div className="meta-label">우선순위</div>
-              <div className="meta-value">높음</div>
-            </div>
-          </div>
-
-          <div className="progress-bar">
-            <div className="progress-fill" style={{ width: `${overallProgress}%` }}></div>
-          </div>
-          <div className="progress-text">전체 진행률: {overallProgress}% ({completedTasks}/{totalTasks} 완료)</div>
-        </div>
-
         {/* Controls Section */}
         <div className="controls-section">
           <div className="controls-grid">
-            <button className="control-btn" onClick={handleAddWBSItem}>
-              ➕ 항목 추가
+            <button className="control-btn" onClick={handleCreateProject}>
+              📊 새 프로젝트 생성
             </button>
-            <button className="control-btn secondary" onClick={handleEditProject}>
-              ✏️ 프로젝트 편집
-            </button>
-            <button className="control-btn success" onClick={handleExportWBS}>
-              📤 내보내기
-            </button>
-            <button className="control-btn secondary" onClick={handleImportWBS}>
-              📥 가져오기
+            <button className="control-btn secondary" onClick={handleViewAllProjects}>
+              📋 전체 프로젝트 보기
             </button>
           </div>
         </div>
@@ -214,55 +140,103 @@ const WbsManager: React.FC = () => {
           <div className="section-title">프로젝트 통계</div>
           <div className="stats-grid">
             <div className="stat-card">
-              <div className="stat-value">{totalTasks}</div>
-              <div className="stat-label">총 작업</div>
+              <div className="stat-value">{totalProjects}</div>
+              <div className="stat-label">총 프로젝트</div>
             </div>
             <div className="stat-card">
-              <div className="stat-value">{completedTasks}</div>
+              <div className="stat-value">{completedProjects}</div>
               <div className="stat-label">완료됨</div>
             </div>
             <div className="stat-card">
-              <div className="stat-value">{inProgressTasks}</div>
+              <div className="stat-value">{inProgressProjects}</div>
               <div className="stat-label">진행중</div>
+            </div>
+            <div className="stat-card">
+              <div className="stat-value">{averageProgress}%</div>
+              <div className="stat-label">평균 진행률</div>
             </div>
           </div>
         </div>
 
-        {/* WBS Structure Section */}
-        <div className="wbs-section">
-          <div className="section-title">WBS 구조</div>
+        {/* Recent Projects Section */}
+        <div className="projects-section">
+          <div className="section-title">최근 프로젝트</div>
           
-          <div className="wbs-tree">
-            {wbsItems.map((item) => (
-              <div 
-                key={item.id} 
-                className={`wbs-item level-${item.level}`}
-                onClick={() => handleWBSItemClick(item)}
+          {projects.length === 0 ? (
+            <div className="empty-state">
+              <div className="empty-icon">📊</div>
+              <h3>등록된 WBS 프로젝트가 없습니다</h3>
+              <p>첫 번째 프로젝트를 생성하여 작업 구조를 관리해보세요</p>
+              <button 
+                className="empty-add-button"
+                onClick={handleCreateProject}
               >
-                <div className="wbs-header">
-                  <div className="wbs-code">{item.code}</div>
-                  <div className={`wbs-status ${getStatusClass(item.status)}`}>
-                    {getStatusLabel(item.status)}
+                WBS 프로젝트 생성하기
+              </button>
+            </div>
+          ) : (
+            <div className="projects-grid">
+              {projects.slice(0, 6).map((project) => (
+                <div 
+                  key={project.id} 
+                  className="project-card"
+                  onClick={() => handleProjectClick(project.id)}
+                >
+                  <div className="project-header">
+                    <h3 className="project-title">{project.title}</h3>
+                    <span 
+                      className="project-status"
+                      style={{ 
+                        background: getStatusColor(project.status),
+                        color: 'white'
+                      }}
+                    >
+                      {getStatusText(project.status)}
+                    </span>
+                  </div>
+                  
+                  <div className="project-description">
+                    {project.description || '프로젝트 설명이 없습니다.'}
+                  </div>
+                  
+                  <div className="project-progress">
+                    <div className="progress-label">
+                      <span>진행률</span>
+                      <span className="progress-value">{project.progress}%</span>
+                    </div>
+                    <div className="progress-bar">
+                      <div 
+                        className="progress-fill"
+                        style={{ width: `${project.progress}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                  
+                  <div className="project-dates">
+                    <div className="date-item">
+                      <span className="date-label">시작일</span>
+                      <span className="date-value">{formatDate(project.start_date)}</span>
+                    </div>
+                    <div className="date-item">
+                      <span className="date-label">종료일</span>
+                      <span className="date-value">{formatDate(project.end_date)}</span>
+                    </div>
                   </div>
                 </div>
-                <div className="wbs-title">{item.title}</div>
-                <div className="wbs-details">
-                  <div className="wbs-detail">
-                    <span>👤</span>
-                    <span>{item.assignee}</span>
-                  </div>
-                  <div className="wbs-detail">
-                    <span>📅</span>
-                    <span>{item.startDate}-{item.endDate}</span>
-                  </div>
-                  <div className="wbs-detail">
-                    <span>⏱️</span>
-                    <span>{item.progress}%</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
+          
+          {projects.length > 6 && (
+            <div className="view-all-container">
+              <button 
+                className="view-all-button"
+                onClick={handleViewAllProjects}
+              >
+                전체 프로젝트 보기 ({projects.length}개)
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </Layout>
