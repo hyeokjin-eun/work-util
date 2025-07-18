@@ -352,21 +352,55 @@
 
 /* Mobile Responsive */
 @media (max-width: 768px) {
+  .quick-action-customizer-overlay {
+    padding: 20px;
+    align-items: flex-start;
+    padding-top: 40px;
+  }
+  
   .quick-action-customizer-modal {
-    width: 95%;
-    max-height: 90vh;
+    width: 100%;
+    max-width: none;
+    max-height: 85vh;
+    min-height: 400px;
+    margin: 0;
   }
   
   .customizer-header {
-    padding: 20px 24px;
+    padding: 16px 20px;
+    flex-shrink: 0;
+  }
+  
+  .customizer-header h3 {
+    font-size: 16px;
   }
   
   .customizer-content {
-    padding: 20px 24px;
+    padding: 16px 20px;
+    flex: 1;
+    overflow-y: auto;
+    /* Ensure content area can scroll */
+    min-height: 0;
   }
   
   .customizer-footer {
-    padding: 20px 24px;
+    padding: 16px 20px;
+    flex-shrink: 0;
+    border-top: 1px solid #f0f0f0;
+    background: white;
+    /* Ensure footer is always visible */
+    position: sticky;
+    bottom: 0;
+  }
+  
+  .customizer-instructions {
+    margin-bottom: 16px;
+    padding: 12px;
+    font-size: 13px;
+  }
+  
+  .actions-list {
+    gap: 8px;
   }
   
   .action-item {
@@ -381,5 +415,52 @@
   .action-icon-preview svg {
     width: 20px;
     height: 20px;
+  }
+  
+  .action-title {
+    font-size: 13px;
+  }
+  
+  .action-subtitle {
+    font-size: 11px;
+  }
+  
+  .btn-primary,
+  .btn-secondary {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+  .quick-action-customizer-overlay {
+    padding: 10px;
+    padding-top: 20px;
+  }
+  
+  .quick-action-customizer-modal {
+    max-height: 80vh;
+    border-radius: 12px;
+  }
+  
+  .customizer-header {
+    padding: 12px 16px;
+  }
+  
+  .customizer-content {
+    padding: 12px 16px;
+  }
+  
+  .customizer-footer {
+    padding: 12px 16px;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    justify-content: center;
   }
 }
