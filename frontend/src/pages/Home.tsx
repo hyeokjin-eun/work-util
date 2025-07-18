@@ -4,9 +4,12 @@ import { useAuth } from '../components/AuthContext'
 import Layout from '../components/Layout'
 import Widget from '../components/Widget'
 import TaskItem from '../components/TaskItem'
+import QuickActionCustomizer from '../components/QuickActionCustomizer'
 import { apiCall } from '../utils/api'
 import useScreenSize from '../hooks/useScreenSize'
+import { useQuickActions } from '../hooks/useQuickActions'
 import '../styles/Dashboard.css'
+import '../styles/QuickActionCustomizer.css'
 
 interface DashboardStats {
   todos: {
@@ -38,6 +41,8 @@ const Home: React.FC = () => {
     wbs: { totalProjects: 0, totalTasks: 0, completedTasks: 0, inProgressProjects: 0 }
   })
   const [statsLoading, setStatsLoading] = useState(true)
+  const [isCustomizerOpen, setIsCustomizerOpen] = useState(false)
+  const { quickActions, loading: quickActionsLoading, getEnabledActions, saveQuickActions } = useQuickActions()
 
   useEffect(() => {
     // Scroll to top when Home component loads
@@ -139,6 +144,27 @@ const Home: React.FC = () => {
     if (hour < 12) return '좋은 아침입니다'
     if (hour < 18) return '좋은 오후입니다'
     return '좋은 저녁입니다'
+  }
+
+  const getActionColorClass = (color: string) => {
+    const colorMap = {
+      primary: 'action-card-primary',
+      secondary: 'action-card-secondary',
+      accent: 'action-card-accent',
+      info: 'action-card-info',
+      warning: 'action-card-warning',
+      success: 'action-card-success'
+    }
+    return colorMap[color as keyof typeof colorMap] || 'action-card-primary'
+  }
+
+  const handleCustomizeActions = () => {
+    setIsCustomizerOpen(true)
+  }
+
+  const handleSaveActions = async (actions: any[]) => {
+    await saveQuickActions(actions)
+    setIsCustomizerOpen(false)
   }
 
   const homeIcon = (
@@ -319,59 +345,53 @@ const Home: React.FC = () => {
 
         {/* Quick Actions */}
         <div className="quick-actions-section">
-          <h3 className="section-title">빠른 실행</h3>
+          <div className="quick-actions-header">
+            <h3 className="section-title">빠른 실행</h3>
+            <button 
+              className="quick-actions-customize-btn"
+              onClick={handleCustomizeActions}
+              disabled={quickActionsLoading}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 20V10"/>
+                <path d="M18 20V4"/>
+                <path d="M6 20v-4"/>
+              </svg>
+              사용자 지정
+            </button>
+          </div>
+          
           <div className="quick-actions-grid">
-            <Link to="/todo" className="action-card action-card-primary">
-              <div className="action-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M9 12l2 2 4-4"/>
-                </svg>
-              </div>
-              <div className="action-content">
-                <div className="action-title">새 할일 추가</div>
-                <div className="action-subtitle">작업을 추가하세요</div>
-              </div>
-              <div className="action-arrow">→</div>
-            </Link>
-            <Link to="/meeting-notes" className="action-card action-card-secondary">
-              <div className="action-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                  <polyline points="14,2 14,8 20,8"/>
-                </svg>
-              </div>
-              <div className="action-content">
-                <div className="action-title">회의록 작성</div>
-                <div className="action-subtitle">회의 내용을 기록하세요</div>
-              </div>
-              <div className="action-arrow">→</div>
-            </Link>
-            <Link to="/json-formatter" className="action-card action-card-accent">
-              <div className="action-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polyline points="16 18 22 12 16 6"/>
-                  <polyline points="8 6 2 12 8 18"/>
-                </svg>
-              </div>
-              <div className="action-content">
-                <div className="action-title">JSON 포맷팅</div>
-                <div className="action-subtitle">데이터를 정리하세요</div>
-              </div>
-              <div className="action-arrow">→</div>
-            </Link>
-            <Link to="/wbs" className="action-card action-card-info">
-              <div className="action-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M3 3h18v18H3z"/>
-                  <path d="M12 8v8m-4-4h8M7 3v18m10-18v18"/>
-                </svg>
-              </div>
-              <div className="action-content">
-                <div className="action-title">WBS 관리</div>
-                <div className="action-subtitle">프로젝트를 구조화하세요</div>
-              </div>
-              <div className="action-arrow">→</div>
-            </Link>
+            {quickActionsLoading ? (
+              // Loading placeholders
+              Array.from({ length: 4 }).map((_, index) => (
+                <div key={index} className="action-card loading">
+                  <div className="action-icon loading-placeholder"></div>
+                  <div className="action-content">
+                    <div className="action-title loading-placeholder"></div>
+                    <div className="action-subtitle loading-placeholder"></div>
+                  </div>
+                  <div className="action-arrow loading-placeholder"></div>
+                </div>
+              ))
+            ) : (
+              getEnabledActions().map((action) => (
+                <Link 
+                  key={action.id} 
+                  to={action.path} 
+                  className={`action-card ${getActionColorClass(action.color)}`}
+                >
+                  <div className="action-icon">
+                    {action.icon}
+                  </div>
+                  <div className="action-content">
+                    <div className="action-title">{action.title}</div>
+                    <div className="action-subtitle">{action.subtitle}</div>
+                  </div>
+                  <div className="action-arrow">→</div>
+                </Link>
+              ))
+            )}
           </div>
         </div>
 
@@ -442,6 +462,14 @@ const Home: React.FC = () => {
           </div>
         </div>
       </div>
+      
+      {/* Quick Action Customizer Modal */}
+      <QuickActionCustomizer
+        isOpen={isCustomizerOpen}
+        onClose={() => setIsCustomizerOpen(false)}
+        onSave={handleSaveActions}
+        currentActions={quickActions}
+      />
     </Layout>
   )
 }

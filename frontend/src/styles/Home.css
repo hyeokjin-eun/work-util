@@ -279,3 +279,76 @@
     text-align: left;
   }
 }
+
+/* Loading Styles */
+.loading-placeholder {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: 6px;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.action-card.loading {
+  pointer-events: none;
+  cursor: default;
+}
+
+.action-card.loading .action-icon.loading-placeholder {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+}
+
+.action-card.loading .action-title.loading-placeholder {
+  height: 16px;
+  width: 80%;
+  margin-bottom: 8px;
+}
+
+.action-card.loading .action-subtitle.loading-placeholder {
+  height: 12px;
+  width: 60%;
+}
+
+.action-card.loading .action-arrow.loading-placeholder {
+  width: 20px;
+  height: 16px;
+}
+
+/* Additional Action Card Colors */
+.action-card-warning {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 1px solid #f59e0b;
+}
+
+.action-card-warning:hover {
+  background: linear-gradient(135deg, #fde68a 0%, #fcd34d 100%);
+}
+
+.action-card-warning .action-icon {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: white;
+}
+
+.action-card-success {
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  border: 1px solid #10b981;
+}
+
+.action-card-success:hover {
+  background: linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 100%);
+}
+
+.action-card-success .action-icon {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+}
