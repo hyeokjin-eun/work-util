@@ -111,11 +111,23 @@ export const useQuickActions = () => {
       
       if (response.ok) {
         const userActions = await response.json()
-        const actionsWithIcons = userActions.map((action: Omit<QuickAction, 'icon'>) => ({
-          ...action,
-          icon: getIcon(action.id)
-        }))
-        setQuickActions(actionsWithIcons)
+        
+        // Check if userActions is null or empty (no saved preferences)
+        if (!userActions || userActions.length === 0) {
+          // Use default actions
+          const defaultActionsWithIcons = defaultQuickActions.map(action => ({
+            ...action,
+            icon: getIcon(action.id)
+          }))
+          setQuickActions(defaultActionsWithIcons)
+        } else {
+          // Use saved user actions
+          const actionsWithIcons = userActions.map((action: Omit<QuickAction, 'icon'>) => ({
+            ...action,
+            icon: getIcon(action.id)
+          }))
+          setQuickActions(actionsWithIcons)
+        }
       } else {
         // If no user preferences exist, use defaults
         const defaultActionsWithIcons = defaultQuickActions.map(action => ({

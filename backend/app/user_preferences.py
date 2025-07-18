@@ -18,12 +18,12 @@ class PreferenceRequest(BaseModel):
 
 @router.get("/user/quick-actions")
 async def get_quick_actions(
-    current_user: dict = Depends(get_current_user),
+    current_user = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Get user's quick actions preferences"""
     try:
-        user_id = current_user["id"]
+        user_id = current_user.id
         
         # Get quick actions preference
         preference = db.query(UserPreferences).filter(
@@ -34,8 +34,8 @@ async def get_quick_actions(
         if preference:
             return json.loads(preference.preference_value)
         else:
-            # Return default actions if no preference exists
-            return None
+            # Return empty array if no preference exists
+            return []
             
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get quick actions: {str(e)}")
@@ -43,12 +43,12 @@ async def get_quick_actions(
 @router.put("/user/quick-actions")
 async def update_quick_actions(
     request: QuickActionRequest,
-    current_user: dict = Depends(get_current_user),
+    current_user = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Update user's quick actions preferences"""
     try:
-        user_id = current_user["id"]
+        user_id = current_user.id
         
         # Check if preference exists
         preference = db.query(UserPreferences).filter(
@@ -81,12 +81,12 @@ async def update_quick_actions(
 @router.get("/user/preferences/{preference_key}")
 async def get_user_preference(
     preference_key: str,
-    current_user: dict = Depends(get_current_user),
+    current_user = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Get a specific user preference"""
     try:
-        user_id = current_user["id"]
+        user_id = current_user.id
         
         preference = db.query(UserPreferences).filter(
             UserPreferences.user_id == user_id,
@@ -107,12 +107,12 @@ async def get_user_preference(
 async def update_user_preference(
     preference_key: str,
     request: PreferenceRequest,
-    current_user: dict = Depends(get_current_user),
+    current_user = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Update a specific user preference"""
     try:
-        user_id = current_user["id"]
+        user_id = current_user.id
         
         # Check if preference exists
         preference = db.query(UserPreferences).filter(
@@ -145,12 +145,12 @@ async def update_user_preference(
 @router.delete("/user/preferences/{preference_key}")
 async def delete_user_preference(
     preference_key: str,
-    current_user: dict = Depends(get_current_user),
+    current_user = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
     """Delete a specific user preference"""
     try:
-        user_id = current_user["id"]
+        user_id = current_user.id
         
         preference = db.query(UserPreferences).filter(
             UserPreferences.user_id == user_id,
