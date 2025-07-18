@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Layout from '../components/Layout'
 import { useAuth } from '../components/AuthContext'
 import { apiCall } from '../utils/api'
+import '../styles/Calendar.css'
 
 interface CalendarEvent {
   id: string
@@ -137,7 +138,12 @@ const Calendar: React.FC = () => {
     }
   }
 
-  const navigateMonth = (direction: 'prev' | 'next') => {
+  const navigateMonth = (direction: 'prev' | 'next', event?: React.MouseEvent<HTMLButtonElement>) => {
+    // Remove focus after click
+    if (event && event.currentTarget) {
+      event.currentTarget.blur()
+    }
+    
     setCurrentDate(prevDate => {
       const newDate = new Date(prevDate)
       if (direction === 'prev') {
@@ -149,7 +155,11 @@ const Calendar: React.FC = () => {
     })
   }
 
-  const goToToday = () => {
+  const goToToday = (event?: React.MouseEvent<HTMLButtonElement>) => {
+    // Remove focus after click
+    if (event && event.currentTarget) {
+      event.currentTarget.blur()
+    }
     setCurrentDate(new Date())
   }
 
@@ -212,106 +222,49 @@ const Calendar: React.FC = () => {
       pageIcon={calendarIcon}
     >
       {/* Calendar Navigation */}
-      <div className="flex" style={{ alignItems: 'center', justifyContent: 'center', marginBottom: '20px', gap: '20px' }}>
-        <div 
-          onClick={() => navigateMonth('prev')}
-          style={{ 
-            width: '32px', 
-            height: '32px', 
-            background: 'var(--primary-blue)', 
-            borderRadius: '50%', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center', 
-            color: 'white', 
-            cursor: 'pointer', 
-            fontSize: '16px', 
-            transition: 'all 0.3s ease' 
-          }}
-        >‹</div>
-        <div style={{ fontSize: '18px', fontWeight: '600', color: '#333' }}>{currentMonth}</div>
-        <div 
-          onClick={() => navigateMonth('next')}
-          style={{ 
-            width: '32px', 
-            height: '32px', 
-            background: 'var(--primary-blue)', 
-            borderRadius: '50%', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center', 
-            color: 'white', 
-            cursor: 'pointer', 
-            fontSize: '16px', 
-            transition: 'all 0.3s ease' 
-          }}
-        >›</div>
+      <div className="calendar-navigation">
+        <button 
+          className="calendar-nav-button"
+          onClick={(e) => navigateMonth('prev', e)}
+        >‹</button>
+        <div className="calendar-month-title">{currentMonth}</div>
+        <button 
+          className="calendar-nav-button"
+          onClick={(e) => navigateMonth('next', e)}
+        >›</button>
       </div>
 
-      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+      <div className="calendar-today-wrapper">
         <button 
-          onClick={goToToday}
-          style={{
-            background: 'var(--primary-blue)',
-            color: 'white',
-            border: 'none',
-            padding: '8px 16px',
-            borderRadius: '20px',
-            fontSize: '14px',
-            fontWeight: '500',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease'
-          }}
+          className="calendar-today-button"
+          onClick={(e) => goToToday(e)}
         >오늘</button>
       </div>
 
       {/* Calendar Grid */}
-      <div className="card" style={{ marginBottom: '20px' }}>
+      <div className="card calendar-grid-container">
         {/* Day Headers */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '8px', marginBottom: '15px' }}>
+        <div className="calendar-week-header">
           {daysOfWeek.map((day) => (
-            <div key={day} style={{ 
-              textAlign: 'center', 
-              fontSize: '12px', 
-              fontWeight: '600', 
-              color: '#666', 
-              padding: '8px 0' 
-            }}>{day}</div>
+            <div key={day} className="calendar-week-day">{day}</div>
           ))}
         </div>
         
         {/* Calendar Days */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '8px' }}>
+        <div className="calendar-days-grid">
           {calendarDays.slice(0, 42).map((dayInfo: any, index) => (
             <div
               key={index}
-              style={{
-                aspectRatio: '1',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'flex-start',
-                fontSize: '14px',
-                fontWeight: '500',
-                cursor: 'pointer',
-                borderRadius: '8px',
-                transition: 'all 0.3s ease',
-                background: dayInfo.isToday ? 'var(--primary-blue)' : 'transparent',
-                color: dayInfo.isToday ? 'white' : (dayInfo.isCurrentMonth ? '#333' : '#ccc'),
-                padding: '4px 2px',
-                position: 'relative'
-              }}
+              className={`calendar-day ${dayInfo.isToday ? 'is-today' : ''} ${dayInfo.isCurrentMonth ? 'is-current-month' : 'is-other-month'}`}
             >
-              <div style={{ marginBottom: '2px' }}>{dayInfo.day}</div>
+              <div className="calendar-day-number">{dayInfo.day}</div>
               {dayInfo.events && dayInfo.events.length > 0 && (
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '2px', justifyContent: 'center' }}>
+                <div className="calendar-events">
                   {dayInfo.events.slice(0, 3).map((event: CalendarEvent, eventIndex: number) => (
                     <div
                       key={eventIndex}
+                      className="calendar-event-dot"
                       style={{
-                        width: '6px',
-                        height: '6px',
-                        borderRadius: '50%',
                         background: event.type === 'todo' 
                           ? (event.completed ? 'var(--success)' : 'var(--warning)') 
                           : event.type === 'meeting' 
@@ -321,7 +274,7 @@ const Calendar: React.FC = () => {
                     />
                   ))}
                   {dayInfo.events.length > 3 && (
-                    <div style={{ fontSize: '8px', color: dayInfo.isToday ? 'white' : '#666' }}>+{dayInfo.events.length - 3}</div>
+                    <div className="calendar-event-more">+{dayInfo.events.length - 3}</div>
                   )}
                 </div>
               )}
@@ -352,37 +305,19 @@ const Calendar: React.FC = () => {
 
       {/* Event Legend */}
       <div className="card">
-        <div className="title-lg" style={{ marginBottom: '15px' }}>이벤트 범례</div>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <div style={{ 
-              width: '8px', 
-              height: '8px', 
-              borderRadius: '50%', 
-              background: 'var(--success)', 
-              marginRight: '8px' 
-            }}></div>
-            <div style={{ fontSize: '14px', color: '#666' }}>완료된 할일</div>
+        <div className="calendar-legend-title">이벤트 범례</div>
+        <div className="calendar-legend-items">
+          <div className="calendar-legend-item">
+            <div className="calendar-legend-dot" style={{ background: 'var(--success)' }}></div>
+            <div className="calendar-legend-text">완료된 할일</div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <div style={{ 
-              width: '8px', 
-              height: '8px', 
-              borderRadius: '50%', 
-              background: 'var(--warning)', 
-              marginRight: '8px' 
-            }}></div>
-            <div style={{ fontSize: '14px', color: '#666' }}>미완료 할일 / 회의</div>
+          <div className="calendar-legend-item">
+            <div className="calendar-legend-dot" style={{ background: 'var(--warning)' }}></div>
+            <div className="calendar-legend-text">미완료 할일 / 회의</div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <div style={{ 
-              width: '8px', 
-              height: '8px', 
-              borderRadius: '50%', 
-              background: 'var(--primary-blue)', 
-              marginRight: '8px' 
-            }}></div>
-            <div style={{ fontSize: '14px', color: '#666' }}>프로젝트</div>
+          <div className="calendar-legend-item">
+            <div className="calendar-legend-dot" style={{ background: 'var(--primary-blue)' }}></div>
+            <div className="calendar-legend-text">프로젝트</div>
           </div>
         </div>
       </div>

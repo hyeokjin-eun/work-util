@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navigation from './Navigation'
+import DesktopNav from './DesktopNav'
+import DesktopLayout from './DesktopLayout'
+import useScreenSize from '../hooks/useScreenSize'
 
 interface LayoutProps {
   children: React.ReactNode
@@ -21,6 +24,7 @@ const Layout: React.FC<LayoutProps> = ({
 }) => {
   const navigate = useNavigate()
   const [showFixedHeader, setShowFixedHeader] = useState(false)
+  const { isDesktop } = useScreenSize()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -45,6 +49,18 @@ const Layout: React.FC<LayoutProps> = ({
     handleScroll()
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+  // Desktop layout
+  if (isDesktop) {
+    return (
+      <div className="desktop-layout">
+        <DesktopLayout>
+          {children}
+        </DesktopLayout>
+      </div>
+    )
+  }
+
+  // Mobile layout
   return (
     <div className="app-container">
       <div className={`fixed-header ${showFixedHeader ? 'visible' : ''}`}>

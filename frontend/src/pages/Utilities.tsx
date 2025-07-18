@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import Layout from '../components/Layout'
+import '../styles/Home.css'
 
 const Utilities: React.FC = () => {
   useEffect(() => {
@@ -18,21 +19,21 @@ const Utilities: React.FC = () => {
       title: 'JSON 포맷터',
       description: 'JSON 데이터 정리 및 포맷팅',
       icon: '🔧',
-      iconClass: 'json',
+      iconClass: 'tool',
       path: '/json-formatter'
     },
     {
       title: 'JSON 비교기',
       description: 'JSON 데이터 간의 차이점 분석',
       icon: '⚖️',
-      iconClass: 'compare',
+      iconClass: 'chart',
       path: '/json-compare'
     },
     {
       title: 'QR 생성기',
       description: '다양한 형식의 QR 코드 생성',
       icon: '📱',
-      iconClass: 'qr',
+      iconClass: 'note',
       path: '/qr-generator'
     }
   ]
@@ -51,11 +52,10 @@ const Utilities: React.FC = () => {
             key={tool.path}
             to={tool.path}
             className="feature-card"
-            style={{ textDecoration: 'none', color: 'inherit' }}
           >
             <div className="feature-header">
               <div className={`feature-icon ${tool.iconClass}`}>{tool.icon}</div>
-              <div>
+              <div className="feature-content">
                 <div className="feature-title">{tool.title}</div>
                 <div className="feature-description">{tool.description}</div>
               </div>

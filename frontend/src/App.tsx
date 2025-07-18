@@ -5,7 +5,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import Login from './components/Login'
 import Register from './components/Register'
 import Home from './pages/Home'
-import Dashboard from './pages/Dashboard'
+import Functions from './pages/Functions'
 import TodoList from './pages/TodoList'
 import AddTodo from './pages/AddTodo'
 import TodoDetail from './pages/TodoDetail'
@@ -24,6 +24,7 @@ import AddWBS from './pages/AddWBS'
 import EditWBS from './pages/EditWBS'
 import WBSDetail from './pages/WBSDetail'
 import AddWBSTask from './pages/AddWBSTask'
+import ServiceIntroPage from './pages/ServiceIntroPage'
 import './App.css'
 
 function App() {
@@ -31,16 +32,10 @@ function App() {
     <Router>
       <AuthProvider>
         <Routes>
+          <Route path="/" element={<ServiceIntroPage />} />
+          <Route path="/intro" element={<Login />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <Home />
-              </ProtectedRoute>
-            }
-          />
           <Route
             path="/home"
             element={
@@ -50,10 +45,10 @@ function App() {
             }
           />
           <Route
-            path="/dashboard"
+            path="/functions"
             element={
               <ProtectedRoute>
-                <Dashboard />
+                <Functions />
               </ProtectedRoute>
             }
           />
@@ -225,7 +220,7 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>
       </AuthProvider>
     </Router>
