@@ -1,6 +1,6 @@
 {
   "name": "smartwork-frontend",
-  "version": "1.0.0",
+  "version": "1.2.2",
   "private": true,
   "dependencies": {
     "@types/qrcode": "^1.5.5",
