@@ -364,6 +364,8 @@
     max-height: 85vh;
     min-height: 400px;
     margin: 0;
+    /* Add bottom margin to lift modal above bottom navigation */
+    margin-bottom: 80px;
   }
   
   .customizer-header {
@@ -391,6 +393,8 @@
     /* Ensure footer is always visible */
     position: sticky;
     bottom: 0;
+    /* Add extra bottom padding for mobile to account for bottom navigation */
+    padding-bottom: 24px;
   }
   
   .customizer-instructions {
@@ -442,6 +446,8 @@
   .quick-action-customizer-modal {
     max-height: 80vh;
     border-radius: 12px;
+    /* Keep the bottom margin from the parent media query */
+    margin-bottom: 80px;
   }
   
   .customizer-header {
@@ -456,6 +462,8 @@
     padding: 12px 16px;
     flex-direction: column;
     gap: 8px;
+    /* Add extra bottom padding for mobile to account for bottom navigation */
+    padding-bottom: 24px;
   }
   
   .btn-primary,

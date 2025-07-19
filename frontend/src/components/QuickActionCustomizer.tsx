@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { useAuth } from './AuthContext'
-import { apiCall } from '../utils/api'
 import { getQuickActionIcon } from '../utils/icons'
 
 interface QuickAction {
@@ -27,7 +25,6 @@ const QuickActionCustomizer: React.FC<QuickActionCustomizerProps> = ({
   onSave,
   currentActions
 }) => {
-  const { token } = useAuth()
   const [actions, setActions] = useState<QuickAction[]>(currentActions)
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null)
   const [saving, setSaving] = useState(false)
@@ -75,14 +72,8 @@ const QuickActionCustomizer: React.FC<QuickActionCustomizerProps> = ({
   const handleSave = async () => {
     setSaving(true)
     try {
-      // Save to backend
-      await apiCall('/api/user/quick-actions', {
-        method: 'PUT',
-        token,
-        body: JSON.stringify({ actions })
-      })
-      
-      onSave(actions)
+      // Call the onSave callback which will handle saving to backend
+      await onSave(actions)
       onClose()
     } catch (error) {
       console.error('Failed to save quick actions:', error)

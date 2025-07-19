@@ -154,18 +154,19 @@ export const useQuickActions = () => {
     
     try {
       const actionsToSave = actions.map(({ icon, ...action }) => action)
+      
       const response = await apiCall('/api/user/quick-actions', {
         method: 'PUT',
         token,
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({ actions: actionsToSave })
       })
       
       if (response.ok) {
-        const actionsWithIcons = actions.map(action => ({
-          ...action,
-          icon: getIcon(action.id)
-        }))
-        setQuickActions(actionsWithIcons)
+        // Reload data from API to ensure synchronization
+        await loadQuickActions()
         return true
       }
       return false

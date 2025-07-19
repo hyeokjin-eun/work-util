@@ -25,6 +25,7 @@ import EditWBS from './pages/EditWBS'
 import WBSDetail from './pages/WBSDetail'
 import AddWBSTask from './pages/AddWBSTask'
 import ServiceIntroPage from './pages/ServiceIntroPage'
+import HomeScreenCustomization from './pages/HomeScreenCustomization'
 import './App.css'
 
 function App() {
@@ -217,6 +218,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <MyPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/home-screen-customization"
+            element={
+              <ProtectedRoute>
+                <HomeScreenCustomization />
               </ProtectedRoute>
             }
           />

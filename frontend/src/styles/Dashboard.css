@@ -2,6 +2,52 @@
   position: relative;
   min-height: 100vh;
   overflow: hidden;
+  transition: background-color 0.3s ease;
+}
+
+.dashboard-container.compact {
+  padding: 10px;
+}
+
+/* Dark Theme Support */
+.dashboard-container.dark-theme {
+  color: var(--text-color);
+}
+
+.dashboard-container.dark-theme .welcome-banner {
+  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+}
+
+.dashboard-container.dark-theme .modern-stat-card {
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+}
+
+.dashboard-container.dark-theme .section-title {
+  color: var(--text-color);
+}
+
+.dashboard-container.dark-theme .progress-card {
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+}
+
+.dashboard-container.dark-theme .activity-card {
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+}
+
+.dashboard-container.dark-theme .action-card {
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+}
+
+.dashboard-container.dark-theme .floating-element {
+  color: var(--accent-color);
 }
 
 /* Floating Background Elements */
@@ -63,13 +109,13 @@
 .welcome-banner::before {
   content: '';
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
+  top: -200%;
+  left: -200%;
+  width: 500%;
+  height: 500%;
   background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
   background-size: 20px 20px;
-  animation: floatBackground 15s linear infinite;
+  animation: float 20s linear infinite;
 }
 
 @keyframes floatBackground {
@@ -120,6 +166,26 @@
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 16px;
   margin-bottom: 32px;
+}
+
+.stats-overview.list-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.stats-overview.list-layout .modern-stat-card {
+  min-height: 60px;
+  padding: 16px 20px;
+}
+
+.stats-overview.compact {
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.stats-overview.compact .modern-stat-card {
+  padding: 16px;
 }
 
 .modern-stat-card {
@@ -297,6 +363,26 @@
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 16px;
   margin-top: 20px;
+}
+
+.quick-actions-grid.list-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.quick-actions-grid.list-layout .action-card {
+  min-height: 60px;
+  padding: 16px 20px;
+}
+
+.quick-actions-grid.compact {
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.quick-actions-grid.compact .action-card {
+  padding: 16px;
 }
 
 .action-card {

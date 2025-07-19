@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../components/AuthContext'
 import Layout from '../components/Layout'
 import { apiCall } from '../utils/api'
@@ -27,6 +28,7 @@ interface UserStats {
 
 const MyPage: React.FC = () => {
   const { user, logout, token } = useAuth()
+  const navigate = useNavigate()
   const [stats, setStats] = useState<UserStats>({
     todos: { total: 0, completed: 0, pending: 0, completionRate: 0 },
     meetings: { total: 0, thisMonth: 0, recent: 0 },
@@ -191,6 +193,10 @@ const MyPage: React.FC = () => {
     }
   }
 
+  const handleHomeScreenCustomize = () => {
+    navigate('/home-screen-customization')
+  }
+
   const userIcon = (
     <svg viewBox="0 0 24 24" style={{ width: '60px', height: '60px', stroke: 'white', fill: 'none', strokeWidth: 2 }}>
       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
@@ -283,21 +289,68 @@ const MyPage: React.FC = () => {
           <div 
             className="flex-between" 
             style={{ padding: '10px 0', borderBottom: '1px solid #f0f0f0', cursor: 'pointer' }}
+            onClick={handleHomeScreenCustomize}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M3 3h18v18H3z"/>
+                <path d="M9 9h6v6H9z"/>
+              </svg>
+              <div style={{ fontSize: '14px', color: '#333' }}>홈 화면 사용자 지정</div>
+            </div>
+            <div style={{ fontSize: '12px', color: '#666' }}>&gt;</div>
+          </div>
+          <div 
+            className="flex-between" 
+            style={{ padding: '10px 0', borderBottom: '1px solid #f0f0f0', cursor: 'pointer' }}
             onClick={() => setShowPasswordModal(true)}
           >
-            <div style={{ fontSize: '14px', color: '#333' }}>비밀번호 변경</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <circle cx="12" cy="16" r="1"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <div style={{ fontSize: '14px', color: '#333' }}>비밀번호 변경</div>
+            </div>
             <div style={{ fontSize: '12px', color: '#666' }}>&gt;</div>
           </div>
           <div className="flex-between" style={{ padding: '10px 0', borderBottom: '1px solid #f0f0f0' }}>
-            <div style={{ fontSize: '14px', color: '#333' }}>알림 설정</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+              </svg>
+              <div style={{ fontSize: '14px', color: '#333' }}>알림 설정</div>
+            </div>
             <div style={{ fontSize: '12px', color: '#666' }}>&gt;</div>
           </div>
           <div className="flex-between" style={{ padding: '10px 0', borderBottom: '1px solid #f0f0f0' }}>
-            <div style={{ fontSize: '14px', color: '#333' }}>테마 설정</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="5"/>
+                <line x1="12" y1="1" x2="12" y2="3"/>
+                <line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/>
+                <line x1="21" y1="12" x2="23" y2="12"/>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+              </svg>
+              <div style={{ fontSize: '14px', color: '#333' }}>테마 설정</div>
+            </div>
             <div style={{ fontSize: '12px', color: '#666' }}>&gt;</div>
           </div>
           <div className="flex-between" style={{ padding: '10px 0' }}>
-            <div style={{ fontSize: '14px', color: '#333' }}>도움말</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+              <div style={{ fontSize: '14px', color: '#333' }}>도움말</div>
+            </div>
             <div style={{ fontSize: '12px', color: '#666' }}>&gt;</div>
           </div>
         </div>

@@ -4,6 +4,7 @@ from app.auth import router as auth_router
 from app.protected import router as protected_router
 from app.user_preferences import router as preferences_router
 from app.database import engine, Base
+from app.models import User, UserPreferences  # Import models to ensure they're registered
 from todo_routes import router as todo_router
 from meeting_routes import router as meeting_router
 from wbs_routes import router as wbs_router

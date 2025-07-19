@@ -496,9 +496,8 @@ const TodoList: React.FC = () => {
                         생성: {formatDate(todo.createdAt)}
                       </span>
                     </div>
-                  </div>
-                  
-                  <div className="todo-actions">
+                    
+                    <div className="todo-actions">
                     <button 
                       className="detail-btn"
                       onClick={() => navigate(`/todo/${todo.id}`)}
@@ -512,12 +511,13 @@ const TodoList: React.FC = () => {
                       onChange={(value) => updateTodoStatus(todo.id, value as Todo['status'])}
                       className="status-custom-select"
                     />
-                    <button 
-                      className="delete-btn"
-                      onClick={() => deleteTodo(todo.id)}
-                    >
-                      🗑️
-                    </button>
+                      <button 
+                        className="delete-btn"
+                        onClick={() => deleteTodo(todo.id)}
+                      >
+                        🗑️
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}

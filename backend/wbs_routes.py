@@ -35,23 +35,18 @@ class WBSTask(Base):
     __tablename__ = "wbs_tasks"
     
     id = Column(Integer, primary_key=True, index=True)
+    project_id = Column(Integer, ForeignKey("wbs_projects.id"))
+    parent_id = Column(Integer, ForeignKey("wbs_tasks.id"))
     title = Column(String(200), nullable=False)
     description = Column(Text)
     start_date = Column(DateTime)
     end_date = Column(DateTime)
-    duration = Column(Integer)  # 소요 시간(일)
-    progress = Column(Float, default=0.0)
-    status = Column(String(20), default="not_started")  # not_started, in_progress, completed, blocked
+    status = Column(String(20), default="pending")  # pending, in_progress, completed, blocked
     priority = Column(String(10), default="medium")  # low, medium, high
+    progress = Column(Float, default=0.0)
+    estimated_hours = Column(Float, default=0.0)
+    actual_hours = Column(Float, default=0.0)
     assignee = Column(String(100))
-    
-    # 계층 구조
-    parent_id = Column(Integer, ForeignKey("wbs_tasks.id"))
-    level = Column(Integer, default=1)
-    order_index = Column(Integer, default=0)
-    
-    # 프로젝트 연결
-    project_id = Column(Integer, ForeignKey("wbs_projects.id"))
     
     # 관계 설정
     project = relationship("WBSProject", back_populates="tasks")
@@ -67,28 +62,26 @@ class WBSTaskCreate(BaseModel):
     description: Optional[str] = None
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
-    duration: Optional[int] = None
     progress: float = 0.0
-    status: str = "not_started"
+    status: str = "pending"
     priority: str = "medium"
+    estimated_hours: float = 0.0
+    actual_hours: float = 0.0
     assignee: Optional[str] = None
     parent_id: Optional[int] = None
-    level: int = 1
-    order_index: int = 0
 
 class WBSTaskUpdate(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
-    duration: Optional[int] = None
     progress: Optional[float] = None
     status: Optional[str] = None
     priority: Optional[str] = None
+    estimated_hours: Optional[float] = None
+    actual_hours: Optional[float] = None
     assignee: Optional[str] = None
     parent_id: Optional[int] = None
-    level: Optional[int] = None
-    order_index: Optional[int] = None
 
 class WBSTaskResponse(BaseModel):
     id: int
@@ -96,14 +89,13 @@ class WBSTaskResponse(BaseModel):
     description: Optional[str]
     start_date: Optional[datetime]
     end_date: Optional[datetime]
-    duration: Optional[int]
     progress: float
     status: str
     priority: str
+    estimated_hours: float
+    actual_hours: float
     assignee: Optional[str]
     parent_id: Optional[int]
-    level: int
-    order_index: int
     project_id: int
     created_at: datetime
     updated_at: datetime
@@ -354,7 +346,7 @@ async def get_wbs_tasks(
         
         tasks = db.query(WBSTask).filter(
             WBSTask.project_id == project_id
-        ).order_by(WBSTask.level, WBSTask.order_index).all()
+        ).order_by(WBSTask.created_at).all()
         
         result = []
         for task in tasks:
@@ -364,14 +356,13 @@ async def get_wbs_tasks(
                 "description": task.description,
                 "start_date": task.start_date.isoformat() if task.start_date else None,
                 "end_date": task.end_date.isoformat() if task.end_date else None,
-                "duration": task.duration,
                 "progress": task.progress,
                 "status": task.status,
                 "priority": task.priority,
+                "estimated_hours": task.estimated_hours,
+                "actual_hours": task.actual_hours,
                 "assignee": task.assignee,
                 "parent_id": task.parent_id,
-                "level": task.level,
-                "order_index": task.order_index,
                 "project_id": task.project_id,
                 "created_at": task.created_at.isoformat(),
                 "updated_at": task.updated_at.isoformat()
@@ -412,14 +403,13 @@ async def create_wbs_task(
             description=task.description,
             start_date=task.start_date,
             end_date=task.end_date,
-            duration=task.duration,
             progress=task.progress,
             status=task.status,
             priority=task.priority,
+            estimated_hours=task.estimated_hours,
+            actual_hours=task.actual_hours,
             assignee=task.assignee,
             parent_id=task.parent_id,
-            level=task.level,
-            order_index=task.order_index,
             project_id=project_id
         )
         
@@ -433,14 +423,13 @@ async def create_wbs_task(
             "description": db_task.description,
             "start_date": db_task.start_date.isoformat() if db_task.start_date else None,
             "end_date": db_task.end_date.isoformat() if db_task.end_date else None,
-            "duration": db_task.duration,
+            "estimated_hours": db_task.estimated_hours,
+            "actual_hours": db_task.actual_hours,
             "progress": db_task.progress,
             "status": db_task.status,
             "priority": db_task.priority,
             "assignee": db_task.assignee,
             "parent_id": db_task.parent_id,
-            "level": db_task.level,
-            "order_index": db_task.order_index,
             "project_id": db_task.project_id,
             "created_at": db_task.created_at.isoformat(),
             "updated_at": db_task.updated_at.isoformat()
@@ -501,14 +490,13 @@ async def update_wbs_task(
             "description": db_task.description,
             "start_date": db_task.start_date.isoformat() if db_task.start_date else None,
             "end_date": db_task.end_date.isoformat() if db_task.end_date else None,
-            "duration": db_task.duration,
+            "estimated_hours": db_task.estimated_hours,
+            "actual_hours": db_task.actual_hours,
             "progress": db_task.progress,
             "status": db_task.status,
             "priority": db_task.priority,
             "assignee": db_task.assignee,
             "parent_id": db_task.parent_id,
-            "level": db_task.level,
-            "order_index": db_task.order_index,
             "project_id": db_task.project_id,
             "created_at": db_task.created_at.isoformat(),
             "updated_at": db_task.updated_at.isoformat()

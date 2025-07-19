@@ -52,6 +52,9 @@ const refreshAccessToken = async (): Promise<string | null> => {
 export const apiCall = async (url: string, options: FetchOptions = {}) => {
   let { token, ...fetchOptions } = options
 
+  console.log('API Call:', url, 'with token:', token ? 'present' : 'missing')
+  console.log('Request options:', fetchOptions)
+
   // 토큰이 있고 만료되었으면 갱신 시도
   if (token && isTokenExpired(token)) {
     console.log('Token expired, attempting to refresh...')
@@ -70,14 +73,18 @@ export const apiCall = async (url: string, options: FetchOptions = {}) => {
   }
 
   const headers = {
-    ...fetchOptions.headers,
+    ...(fetchOptions.headers || {}),
     ...(token && { 'Authorization': `Bearer ${token}` })
   }
+
+  console.log('Final headers:', headers)
 
   const response = await fetch(url, {
     ...fetchOptions,
     headers
   })
+  
+  console.log('Response status:', response.status)
 
   // 401 Unauthorized 에러 처리 (갱신 후에도 401이면 완전한 로그아웃)
   if (response.status === 401) {

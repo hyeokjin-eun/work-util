@@ -147,9 +147,10 @@
 }
 
 .tasks-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
   margin-bottom: 20px;
 }
 
@@ -429,9 +430,13 @@
 /* Todo Actions */
 .todo-actions {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 8px;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
   position: relative;
   z-index: 10;
 }
@@ -446,7 +451,7 @@
   transition: all 0.2s ease;
   color: #374151;
   min-width: 40px;
-  height: 36px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -469,6 +474,8 @@
   padding: 8px 12px;
   font-size: 12px;
   border-radius: 12px;
+  height: 40px;
+  box-sizing: border-box;
 }
 
 .status-custom-select .option-icon {
@@ -540,6 +547,11 @@
   border-radius: 6px;
   transition: all 0.3s ease;
   font-size: 16px;
+  height: 40px;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .delete-btn:hover {
@@ -812,6 +824,24 @@
   .add-task-btn {
     width: 100%;
   }
+
+  .tasks-header {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin-bottom: 16px;
+  }
+
+  .tasks-title {
+    font-size: 16px;
+  }
+
+  .task-count {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
   
   .todo-item {
     padding: 16px;
@@ -830,12 +860,6 @@
     justify-content: flex-start;
   }
 
-  .todo-actions {
-    flex-direction: row;
-    width: 100%;
-    justify-content: flex-end;
-    align-items: center;
-  }
 
   .form-row {
     flex-direction: column;

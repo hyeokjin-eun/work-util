@@ -374,22 +374,51 @@ backend/
 - `GET /api/protected/dashboard` - 대시보드
 - `GET /api/health` - 시스템 상태 확인
 
-## 🗃️ 데이터베이스 스키마
+## 🗃️ 통합 데이터베이스 스키마
 
-### 사용자 테이블 (users)
+### 1. **users** 테이블 (사용자 정보)
 ```sql
 CREATE TABLE users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT UNIQUE NOT NULL,
-    email TEXT,
-    hashed_password TEXT NOT NULL,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    hashed_password VARCHAR(100) NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- 인덱스
+CREATE INDEX idx_users_username ON users(username);
+CREATE INDEX idx_users_email ON users(email);
 ```
 
-### 할일 테이블 (todos) ⭐ **NEW**
+### 2. **user_preferences** 테이블 (사용자 설정) ⭐ **NEW**
+```sql
+CREATE TABLE user_preferences (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    preference_key VARCHAR(100) NOT NULL,
+    preference_value TEXT NOT NULL,  -- JSON 형태 저장
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- 인덱스
+CREATE INDEX idx_user_preferences_user_id ON user_preferences(user_id);
+CREATE INDEX idx_user_preferences_key ON user_preferences(preference_key);
+```
+
+**사용 예시**:
+```json
+{
+  "preference_key": "quick_actions",
+  "preference_value": "[{\"id\":\"new-todo\",\"title\":\"새 할일 추가\",\"enabled\":true,\"order\":0}]"
+}
+```
+
+### 3. **todos** 테이블 (할일 관리) ⭐ **ENHANCED**
 ```sql
 CREATE TABLE todos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -398,22 +427,118 @@ CREATE TABLE todos (
     description TEXT,
     priority TEXT NOT NULL DEFAULT 'medium',  -- 'high', 'medium', 'low'
     status TEXT NOT NULL DEFAULT 'pending',   -- 'pending', 'in_progress', 'completed'
-    category TEXT DEFAULT '',
+    category TEXT DEFAULT '',                  -- 'work', 'personal', 'study', 'health', 'finance', 'other'
     due_date DATE,
     tags TEXT DEFAULT '',                      -- 콤마로 구분된 태그 목록
     completed BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
-```
 
-### 데이터베이스 인덱스
-```sql
+-- 인덱스
 CREATE INDEX idx_todos_user_id ON todos(user_id);
 CREATE INDEX idx_todos_status ON todos(status);
 CREATE INDEX idx_todos_due_date ON todos(due_date);
 ```
+
+### 4. **meetings** 테이블 (회의록 관리)
+```sql
+CREATE TABLE meetings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    date TEXT NOT NULL,                       -- 회의 날짜 (YYYY-MM-DD)
+    time TEXT NOT NULL,                       -- 회의 시간 (HH:MM)
+    location TEXT DEFAULT '',                 -- 회의 장소
+    attendees TEXT DEFAULT '',                -- 참석자 목록 (JSON 형태)
+    agenda TEXT DEFAULT '',                   -- 회의 안건
+    content TEXT DEFAULT '',                  -- 회의 내용
+    decisions TEXT DEFAULT '',                -- 결정사항
+    action_items TEXT DEFAULT '',             -- 실행 항목
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- 인덱스
+CREATE INDEX idx_meetings_user_id ON meetings(user_id);
+CREATE INDEX idx_meetings_date ON meetings(date);
+```
+
+### 5. **wbs_projects** 테이블 (WBS 프로젝트)
+```sql
+CREATE TABLE wbs_projects (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    title VARCHAR(200) NOT NULL,
+    description TEXT,
+    start_date DATETIME,
+    end_date DATETIME,
+    status VARCHAR(20) DEFAULT 'planning',    -- 'planning', 'in_progress', 'completed', 'on_hold'
+    progress FLOAT DEFAULT 0.0,              -- 진행률 (0.0 ~ 100.0)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- 인덱스
+CREATE INDEX idx_wbs_projects_user_id ON wbs_projects(user_id);
+CREATE INDEX idx_wbs_projects_status ON wbs_projects(status);
+```
+
+### 6. **wbs_tasks** 테이블 (WBS 작업) ⭐ **FIXED**
+```sql
+CREATE TABLE wbs_tasks (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    project_id INTEGER NOT NULL,
+    parent_id INTEGER,                        -- 부모 작업 ID (계층 구조)
+    title VARCHAR(200) NOT NULL,
+    description TEXT,
+    start_date DATETIME,
+    end_date DATETIME,
+    status VARCHAR(20) DEFAULT 'pending',     -- 'pending', 'in_progress', 'completed', 'blocked'
+    priority VARCHAR(10) DEFAULT 'medium',    -- 'low', 'medium', 'high'
+    progress FLOAT DEFAULT 0.0,              -- 진행률 (0.0 ~ 100.0)
+    estimated_hours FLOAT DEFAULT 0.0,       -- 예상 소요 시간 (수정됨)
+    actual_hours FLOAT DEFAULT 0.0,          -- 실제 소요 시간 (수정됨)
+    assignee VARCHAR(100),                    -- 담당자
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (project_id) REFERENCES wbs_projects(id) ON DELETE CASCADE,
+    FOREIGN KEY (parent_id) REFERENCES wbs_tasks(id) ON DELETE SET NULL
+);
+
+-- 인덱스
+CREATE INDEX idx_wbs_tasks_project_id ON wbs_tasks(project_id);
+CREATE INDEX idx_wbs_tasks_parent_id ON wbs_tasks(parent_id);
+```
+
+### 💾 주요 특징 및 관계
+
+#### 🔗 테이블 관계
+- **users (1) → user_preferences (N)**: 사용자별 설정 관리
+- **users (1) → todos (N)**: 사용자별 할일 관리
+- **users (1) → meetings (N)**: 사용자별 회의록 관리
+- **users (1) → wbs_projects (N)**: 사용자별 프로젝트 관리
+- **wbs_projects (1) → wbs_tasks (N)**: 프로젝트별 작업 관리
+- **wbs_tasks (1) → wbs_tasks (N)**: 계층적 작업 구조 (Self-referencing)
+
+#### 🔒 보안 설계
+- **CASCADE 삭제**: 사용자 삭제 시 관련 데이터 자동 삭제
+- **사용자 격리**: 모든 데이터는 user_id로 접근 제한
+- **인덱스 최적화**: 자주 조회되는 컬럼에 인덱스 적용
+
+#### 📊 데이터 타입 특징
+- **JSON 저장**: user_preferences.preference_value, meetings.attendees
+- **날짜 관리**: 다양한 날짜 형식 지원 (DATE, DATETIME, TEXT)
+- **계층 구조**: wbs_tasks.parent_id를 통한 무한 깊이 작업 계층
+- **진행률 추적**: 0.0~100.0 범위의 FLOAT 타입
+
+#### 🛠️ 최근 수정사항 (2025-07-19)
+- **wbs_tasks 스키마 수정**: `duration`/`level`/`order_index` → `estimated_hours`/`actual_hours`
+- **WBS API 500 에러 해결**: 코드 모델과 실제 DB 스키마 일치
+- **user_preferences 테이블 추가**: 홈 화면 커스터마이징 지원
 
 ## 🧪 테스트 계정 및 사용법
 
@@ -496,6 +621,28 @@ curl -X POST https://next-exit.me/api/todos \
 - [ ] 마감일 표시 및 알림 동작
 
 ## 🔧 v1.2.1 완료된 작업 내역
+
+### 📋 최근 완료된 작업 (2025-07-19)
+
+#### 1. 홈 화면 커스터마이징 시스템 완성
+- **빠른 실행 메뉴 이동**: 홈 화면에서 마이페이지 "홈 화면 사용자 지정"으로 이동
+- **Content-Type 헤더 수정**: API 호출 시 422 에러 해결
+- **테마 설정 제거**: 색상 커스터마이징, 전역 설정 기능 완전 제거
+- **API 모달 제거**: 성공/에러 알림 모달 삭제
+- **데이터 로딩 최적화**: 사용자 설정 기반 조건부 데이터 로딩
+- **모바일 반응형**: 할일 관리 페이지 mobile UI 최적화
+- **WBS API 수정**: 500 에러 해결, 데이터베이스 스키마 정렬
+- **CustomSelect 통합**: 홈 화면 커스터마이징에 일관된 UI 적용
+- **TodoList UI 표준화**: 모든 화면 크기에서 동일한 UI 구성
+- **액션 카드 스타일링**: 파란 테두리 제거
+- **백그라운드 애니메이션**: header와 welcome-banner 크기 통일
+
+#### 2. 기술적 개선사항
+- **API 헤더 처리**: Content-Type 누락으로 인한 422 에러 해결
+- **데이터베이스 정합성**: WBS 모델과 실제 DB 스키마 일치
+- **CSS 반응형 개선**: 모바일 우선 설계 적용
+- **컴포넌트 재사용성**: CustomSelect 전역 적용
+- **배경 애니메이션 일관성**: 모든 섹션 동일한 크기 적용
 
 ### 📋 완료된 작업 (2025-07-18)
 
@@ -631,111 +778,53 @@ curl -X POST https://next-exit.me/api/todos \
 - **로딩 상태 관리**: 데이터 로딩 중 사용자 피드백
 - **에러 처리**: 네트워크 오류 및 API 에러 적절한 처리
 
-### 🗄️ 최종 데이터베이스 스키마
+### 💡 홈 화면 커스터마이징 시스템 ⭐ **NEW**
 
-#### Users 테이블
-```sql
-CREATE TABLE users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username VARCHAR(50) UNIQUE NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    hashed_password VARCHAR(100) NOT NULL,
-    is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+#### 홈 화면 레이아웃 설정
+user_preferences 테이블을 통해 사용자별 홈 화면 구성을 관리합니다.
+
+**지원되는 설정 키**:
+- `home_screen_layout`: 홈 화면 섹션 구성 및 순서
+- `quick_actions`: 빠른 실행 메뉴 커스터마이징
+
+**예시 데이터**:
+```json
+{
+  "preference_key": "home_screen_layout",
+  "preference_value": {
+    "sections": [
+      {
+        "id": "welcome",
+        "type": "welcome",
+        "title": "환영 섹션",
+        "enabled": true,
+        "order": 1,
+        "settings": {
+          "showTime": true,
+          "showDate": true
+        }
+      },
+      {
+        "id": "quickActions",
+        "type": "quickActions", 
+        "title": "빠른 실행",
+        "enabled": true,
+        "order": 2,
+        "settings": {
+          "layout": "grid",
+          "maxItems": 8,
+          "showIcons": true,
+          "showDescriptions": true
+        }
+      }
+    ]
+  }
+}
 ```
 
-#### Todos 테이블
-```sql
-CREATE TABLE todos (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
-    title VARCHAR(200) NOT NULL,
-    description TEXT,
-    priority VARCHAR(20) DEFAULT 'medium',
-    due_date DATE,
-    completed BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id)
-);
-```
-
-#### Meetings 테이블
-```sql
-CREATE TABLE meetings (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
-    title VARCHAR(200) NOT NULL,
-    date DATE NOT NULL,
-    participants TEXT,
-    agenda TEXT,
-    content TEXT,
-    conclusion TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id)
-);
-```
-
-#### WBS_Projects 테이블
-```sql
-CREATE TABLE wbs_projects (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
-    title VARCHAR(200) NOT NULL,
-    description TEXT,
-    start_date DATE,
-    end_date DATE,
-    status VARCHAR(20) DEFAULT 'planning',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id)
-);
-```
-
-#### WBS_Tasks 테이블
-```sql
-CREATE TABLE wbs_tasks (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    project_id INTEGER NOT NULL,
-    parent_id INTEGER,
-    title VARCHAR(200) NOT NULL,
-    description TEXT,
-    duration INTEGER DEFAULT 0,
-    level INTEGER DEFAULT 1,
-    status VARCHAR(20) DEFAULT 'planned',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (project_id) REFERENCES wbs_projects(id),
-    FOREIGN KEY (parent_id) REFERENCES wbs_tasks(id)
-);
-```
-
-#### UserPreferences 테이블 ⭐ **NEW**
-```sql
-CREATE TABLE user_preferences (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
-    preference_key VARCHAR(100) NOT NULL,
-    preference_value TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id)
-);
-```
-
-##### UserPreferences 사용 예시
-```sql
--- 빠른 실행 메뉴 설정 저장
-INSERT INTO user_preferences (user_id, preference_key, preference_value) 
-VALUES (1, 'quick_actions', '[{"id":"new-todo","title":"새 할일 추가","enabled":true,"order":0}]');
-
--- 사용자 설정 조회
-SELECT preference_value FROM user_preferences 
-WHERE user_id = 1 AND preference_key = 'quick_actions';
-```
+#### API 엔드포인트
+- `GET /api/user/home-screen-layout` - 홈 화면 레이아웃 조회
+- `PUT /api/user/home-screen-layout` - 홈 화면 레이아웃 저장
 
 ### 🚀 API 엔드포인트 완성
 

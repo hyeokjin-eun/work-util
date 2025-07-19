@@ -1,6 +1,11 @@
 /* Home Page Styles */
 .home-container {
-  padding-bottom: 100px;
+}
+
+/* Loading Spinner Animation */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 /* Chart Animation */
@@ -199,8 +204,6 @@
 /* Mobile Responsive */
 @media (max-width: 768px) {
   .home-container {
-    padding: var(--space-lg);
-    padding-bottom: 100px;
   }
   
   .chart-container {
